@@ -17,17 +17,8 @@ set_cookie_variable_from_env
 
 BATCH_SLUGS = [1030, 1003]
 KITT_COOKIE = KITT_USER_COOKIE
-ANSI_COLORS = {
-  green: "\e[38;5;76m",
-  red: "\e[38;5;160m",
-  orange: "\e[38;5;214m",
-  gray: "\e[38;5;250m",
-  darkgray: "\e[38;5;240m",
-  lightgray: "\e[38;5;255m",
-  white: "\e[38;5;15m",
-  reset: "\u001b[0m"
-}
 
+require_relative 'kitt_bar_app/config/setup'
 require_relative 'kitt_bar_app/plugin'
 
 Plugin.call(BATCH_SLUGS)

@@ -2,16 +2,19 @@ require 'net/http'
 require 'json'
 
 class Batch
-  attr_reader :slug, :lunch_break, :ticket_count, :color
+  class ConnectionError < StandardError; end
+
+  attr_reader :slug, :lunch_break, :ticket_count, :color, :errors
 
   def initialize(slug)
     @slug = slug
+    @errors = []
    	parse_batch_status
   end
 
   def menu
 	  puts "---"
-	  puts "#{ANSI_COLORS[:white]}Batch ##{@slug}#{ANSI_COLORS[:reset]}"
+	  puts "#{Color.white}Batch ##{@slug}#{Color.reset}"
 	  puts "Tickets|href=#{tickets_url}"
 	  puts "Calendar|href=#{calendar_url}"
 	  puts "Students|href=#{classmates_url}"
@@ -20,7 +23,7 @@ class Batch
   def header
     return if @color == "gray"
 
-  	"#{@slug} #{ANSI_COLORS[@color.to_sym]}#{[emoji, @ticket_count].join(" ")}#{ANSI_COLORS[:reset]}"
+  	"#{@slug} #{Color.send(@color)}#{[emoji, @ticket_count].join(" ")}#{Color.reset}"
   end
 
   def tickets_url
@@ -56,5 +59,7 @@ class Batch
   	@color 			 	= status['color'] == "grey" ? "gray" : status['color']
   	@ticket_count = status['count']
   	@lunch_break  = status['lunch_break']
+  rescue => e
+    @errors << e
   end
 end

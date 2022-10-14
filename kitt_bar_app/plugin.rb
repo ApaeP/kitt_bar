@@ -12,7 +12,9 @@ class Plugin
 		initialize_batches
 	end
 
-	def generate
+	def generate		
+		puts "❌ network error".red && return if network_error?
+		
 		header
 		menu
 	end
@@ -22,9 +24,9 @@ class Plugin
 	def header
 		headers = @batches.map(&:header).compact
 		if headers.empty?
-			puts "#{ANSI_COLORS[:darkgray]}😴#{ANSI_COLORS[:reset]}"
+			puts "#{Color.darkgray}😴#{Color.reset}"
 		else
-			puts "#{headers.join(" #{ANSI_COLORS[:darkgray]}❖#{ANSI_COLORS[:reset]} ")}"
+			puts "#{headers.join(" #{Color.darkgray}❖#{Color.reset} ")}"
 		end
 		puts "---"
 	end
@@ -34,6 +36,12 @@ class Plugin
 	end
 
 	def initialize_batches
-		@batches = @slugs.map { |slug| Batch.new(slug) }
+		@batches = @slugs.map do |slug| 
+			batch = Batch.new(slug) 
+		end
+	end
+
+	def network_error?
+		Batch.new(0).errors.any?
 	end
 end
