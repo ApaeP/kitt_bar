@@ -1,33 +1,39 @@
-require 'net/http'
-require 'json'
-
 class Batch
-  class ConnectionError < StandardError; end
-
-  attr_reader :slug, :lunch_break, :ticket_count, :color, :errors
-
-  def initialize(slug)
-    @slug = slug
-    @errors = []
-   	parse_batch_status
+  def initialize(attr = {})
+    @slug = attr[:slug]
+    @type = attr[:type]
+    @city = attr[:city]
+    @cursus = attr[:cursus]
   end
 
-  def menu
-	  puts "---"
-	  puts "#{Color.white}Batch ##{@slug}#{Color.reset}"
-	  puts "Tickets|href=#{tickets_url}"
-	  puts "Calendar|href=#{calendar_url}"
-	  puts "Students|href=#{classmates_url}"
+  def menu_name
+    "##{@slug} #{menu_cursus} #{menu_type} - #{@city}|href=https://kitt.lewagon.com/camps/#{@slug}|"
   end
 
-  def header
-    return if @color == "gray"
-
-  	"#{@slug} #{Color.send(@color)}#{[emoji, @ticket_count].join(" ")}#{Color.reset}"
+  def type_color
+    case @type
+    when 'FT' then 148
+    when 'PT' then 135
+    end
   end
 
-  def tickets_url
-    "https://kitt.lewagon.com/camps/#{@slug}/tickets"
+  def menu_type
+    "#{Color.base(type_color)}#{@type}#{Color.reset}"
+  end
+
+  def cursus_color
+    case @cursus
+    when 'Web' then 32
+    when 'Data Analytics' then 6
+    end
+  end
+
+  def menu_cursus
+    "#{Color.base(cursus_color)}#{@cursus}#{Color.reset}"
+  end
+
+  def menu_city
+    "#{Color.base(32)}##{@city}#{Color.reset}"
   end
 
   def classmates_url
@@ -36,30 +42,5 @@ class Batch
 
   def calendar_url
     "https://kitt.lewagon.com/camps/#{@slug}/calendar"
-  end
-
-  def emoji
-    return "🥐" if @lunch_break
-
-    case @color
-    when "red" then "🔴"
-    when "orange" then "🟠"
-    when "green" then "🟢"
-    else
-      "⚫️"
-    end
-  end
-
-  private
-
-  def parse_batch_status
-  	url 	 = URI("https://kitt.lewagon.com/api/v1/camps/#{@slug}/color")
-  	status = JSON.parse(Net::HTTP.get(url))
-
-  	@color 			 	= status['color'] == "grey" ? "gray" : status['color']
-  	@ticket_count = status['count']
-  	@lunch_break  = status['lunch_break']
-  rescue => e
-    @errors << e
   end
 end
