@@ -29,7 +29,7 @@ class CurrentBatch < Batch
   end
 
   def header
-    return if @color == "gray"
+    return if @errors.any? || @color == "gray"
 
   	"#{@slug} #{Color.send(@color)}#{[emoji, @ticket_count].join(" ")}#{Color.reset}"
   end
@@ -51,9 +51,9 @@ class CurrentBatch < Batch
     return "🥐" if @lunch_break
 
     case @color
-    when "red" then "🔴"
+    when "red"    then "🔴"
     when "orange" then "🟠"
-    when "green" then "🟢"
+    when "green"  then "🟢"
     else
       "⚫️"
     end
