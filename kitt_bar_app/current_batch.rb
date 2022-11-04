@@ -24,6 +24,7 @@ class CurrentBatch < Batch
 
     ticketer = ticket_data.dig('user', 'name')
     table = ticket_data.dig('table')
+    # `osascript -e 'set Volume 10'; afplay #{File.join(File.dirname(__FILE__), 'assets/notification_sound.mp3')}`
 
     "#{ticketer} @ table #{table}"
   end
