@@ -61,7 +61,7 @@ class CurrentBatch < Batch
   end
 
   def user_ticket
-    fetch_api_data.dig('tickets').find { |ticket| ticket.dig('is_mine') }
+    fetch_api_data.dig('tickets')&.find { |ticket| ticket.dig('is_mine') }
   end
 
   def parse_batch_status
