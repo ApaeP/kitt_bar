@@ -15,9 +15,8 @@ end
 BATCH_INFOS = [
   { slug: 1030, type: 'FT', cursus: 'Web', city: 'Paris'},
   { slug: 1003, type: 'PT', cursus: 'Web', city: 'Paris'},
-  { slug: 993, type: 'FT', cursus: 'Web', city: 'Martinique'},
-  { slug: 1080, type: 'FT', cursus: 'Data Analytics', city: 'Paris'},
 ]
+
 OLD_BATCHES = [
   { slug: 940, type: 'FT', cursus: 'Web', city: 'Paris'},
   { slug: 860, type: 'FT', cursus: 'Web', city: 'Paris'},
@@ -38,9 +37,12 @@ OLD_BATCHES = [
   { slug: 350, type: 'FT', cursus: 'Web', city: 'Paris'},
   { slug: 320, type: 'FT', cursus: 'Web', city: 'Paris'},
   { slug: 886, type: 'FT', cursus: 'Web', city: 'Remote'},
+  { slug: 1080, type: 'FT', cursus: 'Data Analytics', city: 'Paris'},
+  { slug: 993, type: 'FT', cursus: 'Web', city: 'Martinique'},
   { slug: 827, type: 'FT', cursus: 'Web', city: 'Martinique'},
   { slug: 762, type: 'FT', cursus: 'Web', city: 'Martinique'},
 ]
+
 KITT_COOKIE = KITT_USER_COOKIE
 
 require_relative 'kitt_bar_app/config/setup'

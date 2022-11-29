@@ -1,6 +1,7 @@
-require 'net/http'
+require 'open3'
 require 'json'
 require_relative 'batch'
+# `osascript -e'set Volume 10'; afplay #{File.join(File.dirname(__FILE__), 'assets/notification_sound.mp3')}`
 
 class CurrentBatch < Batch
   attr_reader :slug, :lunch_break, :ticket_count, :color, :errors
@@ -8,23 +9,26 @@ class CurrentBatch < Batch
   def initialize(attr = {})
     super
     @errors = []
+    @api_data = fetch_api_data
+    @ticket = user_ticket
    	parse_batch_status
   end
 
   def menu
 	  puts "---"
     puts "#{menu_name}"
-	  puts "- Tickets|href=#{tickets_url}|size=12"
+    end_ticket
+    tickets
 	  puts "- Calendar|href=#{calendar_url}|size=12"
 	  puts "- Students|href=#{classmates_url}|size=12"
+    day_team
   end
 
   def ticket
-    return unless ticket_data = user_ticket
+    return unless @ticket
 
-    ticketer = ticket_data.dig('user', 'name')
-    table = ticket_data.dig('table')
-    # `osascript -e 'set Volume 10'; afplay #{File.join(File.dirname(__FILE__), 'assets/notification_sound.mp3')}`
+    ticketer = @ticket.dig('user', 'name')
+    table = @ticket.dig('table')
 
     "#{ticketer} @ table #{table}"
   end
@@ -35,6 +39,24 @@ class CurrentBatch < Batch
   	"#{@slug} #{Color.send(@color)}#{[emoji, @ticket_count].join(" ")}#{Color.reset}"
   end
 
+  def tickets
+	  puts "- Tickets|href=#{tickets_url}|size=12"    
+  end
+
+  def end_ticket
+    return unless @ticket
+
+    url = "https://kitt.lewagon.com/api/v1/tickets/#{@ticket['id']}/mark_as_solved"
+    puts "- Validate ticket|shell=\"#{__dir__}/ticket_validator.rb\" param1=#{KITT_COOKIE} param2=#{url}"
+  end
+
+  def day_team
+    return if @api_data['on_duties'].empty?
+
+    puts "- Teachers"
+    @api_data['on_duties'].each { |teacher| puts "--#{teacher['name']}|href=https://kitt.lewagon.com#{teacher['teacher_path']}" }
+  end
+
   private
 
   def tickets_url
@@ -43,8 +65,8 @@ class CurrentBatch < Batch
 
   def fetch_api_data
     url       = "https://kitt.lewagon.com/api/v1/camps/#{@slug}/tickets"
-    cookie    = KITT_COOKIE
-    request   = `curl --cookie \"#{KITT_COOKIE}\" #{url}`
+
+    request = Open3.capture3("curl --cookie \"#{KITT_COOKIE}\" #{url}").first
     JSON.parse(request)
   end
 
@@ -61,17 +83,12 @@ class CurrentBatch < Batch
   end
 
   def user_ticket
-    fetch_api_data.dig('tickets')&.find { |ticket| ticket.dig('is_mine') }
+    @api_data.dig('tickets')&.find { |ticket| ticket.dig('is_mine') }
   end
 
   def parse_batch_status
-  	url 	 = URI("https://kitt.lewagon.com/api/v1/camps/#{@slug}/color")
-  	status = JSON.parse(Net::HTTP.get(url))
-
-  	@color 			 	= status['color'] == "grey" ? "gray" : status['color']
-  	@ticket_count = status['count']
-  	@lunch_break  = status['lunch_break']
-  rescue => e
-    @errors << e
+  	@color 			 	= @api_data['camp']['color'] == "grey" ? "gray" : @api_data['camp']['color']
+  	@ticket_count = @api_data['tickets'].count
+  	@lunch_break  = @api_data['camp']['on_lunch_break']
   end
 end
