@@ -46,9 +46,9 @@ class CurrentBatch < Batch
       puts "-- #{ticket.dig('user', 'name')} #{assigned_ticket(ticket)}"
       ## TODO : two different puts for Take or Leave
       # url = "https://kitt.lewagon.com/api/v1/tickets/#{ticket.dig('id')}/take"
-      puts "---- #{Color.orange}take it !#{Color.reset}|shell=\"#{HttpKitt.put(ticket, "take")}\"" if ticket.dig('policy', 'current_user_can_take')
-      puts "---- #{Color.green}mark as done !#{Color.reset}|shell=\"#{HttpKitt.put(ticket, "done")}\"" if ticket.dig('policy', 'current_user_can_mark_as_solved')
-      puts "---- #{Color.red}cancel#{Color.reset}|shell=\"#{HttpKitt.put(ticket, "cancel")}\"" if ticket.dig('policy', 'current_user_can_cancel')
+      puts "---- #{Color.orange}take it !#{Color.reset} | #{HttpKitt.put(ticket, "take")}" if ticket.dig('policy', 'current_user_can_take')
+      puts "---- #{Color.green}mark as done !#{Color.reset} | #{HttpKitt.put(ticket, "done")}" if ticket.dig('policy', 'current_user_can_mark_as_solved')
+      puts "---- #{Color.red}cancel#{Color.reset} | #{HttpKitt.put(ticket, "cancel")}" if ticket.dig('policy', 'current_user_can_cancel')
     }
   end
 
@@ -56,7 +56,7 @@ class CurrentBatch < Batch
     return unless @ticket
 
     # url = "https://kitt.lewagon.com/api/v1/tickets/#{@ticket['id']}/mark_as_solved"
-    puts "- Validate ticket with #{@ticket.dig('user','name')}|shell=\"#{HttpKitt.put(@ticket, "solved")}\""
+    puts "- Validate ticket with #{@ticket.dig('user','name')} | #{HttpKitt.put(@ticket, "done")}"
   end
 
   def day_team

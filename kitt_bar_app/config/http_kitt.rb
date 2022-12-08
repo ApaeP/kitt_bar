@@ -1,7 +1,7 @@
 class HttpKitt
   def initialize
-    @kitt_cookie = ENV["KITT_USER_COOKIE"]
-    @base_url = "https://kitt.lewagon.com/"
+    @kitt_cookie = KITT_USER_COOKIE
+    @base_url = "https://kitt.lewagon.com"
   end
 
   class << self
@@ -15,7 +15,7 @@ class HttpKitt
   end
 
   def put(ticket, action)
-    "#{__dir__}/kitt_request\" param1='PUT' param2=#{@kitt_cookie} param3=#{url_for(ticket, action)}"
+    "shell=\"#{__dir__}/kitt_request\" param1=PUT param2=#{@kitt_cookie} param3=#{url_for(ticket, action)}"
   end
 
   def url_for(ticket, action)
