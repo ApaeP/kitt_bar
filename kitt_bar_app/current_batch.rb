@@ -44,7 +44,6 @@ class CurrentBatch < Batch
 
     @api_data.dig('tickets').each { |ticket|
       puts "-- #{ticket.dig('user', 'name')} #{assigned_ticket(ticket)}"
-      ## TODO : two different puts for Take or Leave
       # url = "https://kitt.lewagon.com/api/v1/tickets/#{ticket.dig('id')}/take"
       puts "---- #{Color.orange}take it !#{Color.reset} | #{HttpKitt.put(ticket, "take")}" if ticket.dig('policy', 'current_user_can_take')
       puts "---- #{Color.green}mark as done !#{Color.reset} | #{HttpKitt.put(ticket, "done")}" if ticket.dig('policy', 'current_user_can_mark_as_solved')
@@ -97,6 +96,7 @@ class CurrentBatch < Batch
 
   def assigned_ticket(ticket)
     return if ticket.dig('assigned', 'id').nil?
+
     "x #{ ticket.dig('assigned', 'name')}"
   end
 

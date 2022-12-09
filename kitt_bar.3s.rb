@@ -13,11 +13,11 @@ File.read('.env').split("\n").each do |env_var|
 end
 
 BATCH_INFOS = [
-  { slug: 1030, type: 'FT', cursus: 'Web', city: 'Paris'},
-  { slug: 984, type: 'FT', cursus: 'Web', city: 'Paris'},
 ]
 
 OLD_BATCHES = [
+  { slug: 1030, type: 'FT', cursus: 'Web', city: 'Paris'},
+  { slug: 984, type: 'FT', cursus: 'Web', city: 'Paris'}
 ]
 
 KITT_COOKIE = KITT_USER_COOKIE
