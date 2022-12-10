@@ -40,14 +40,22 @@ class CurrentBatch < Batch
   end
 
   def tickets
-	  puts "- Tickets|href=#{tickets_url}|size=12"    
+	  puts "- Tickets|size=12"
+
+    @api_data.dig('tickets').each { |ticket|
+      puts "-- #{ticket.dig('user', 'name')} #{assigned_ticket(ticket)}"
+      # url = "https://kitt.lewagon.com/api/v1/tickets/#{ticket.dig('id')}/take"
+      puts "---- #{Color.orange}take it !#{Color.reset} | #{HttpKitt.put(ticket, "take")}" if ticket.dig('policy', 'current_user_can_take')
+      puts "---- #{Color.green}mark as done !#{Color.reset} | #{HttpKitt.put(ticket, "done")}" if ticket.dig('policy', 'current_user_can_mark_as_solved')
+      puts "---- #{Color.red}cancel#{Color.reset} | #{HttpKitt.put(ticket, "cancel")}" if ticket.dig('policy', 'current_user_can_cancel')
+    }
   end
 
   def end_ticket
     return unless @ticket
 
-    url = "https://kitt.lewagon.com/api/v1/tickets/#{@ticket['id']}/mark_as_solved"
-    puts "- Validate ticket|shell=\"#{__dir__}/ticket_validator.rb\" param1=#{KITT_COOKIE} param2=#{url}"
+    # url = "https://kitt.lewagon.com/api/v1/tickets/#{@ticket['id']}/mark_as_solved"
+    puts "- Validate ticket with #{@ticket.dig('user','name')} | #{HttpKitt.put(@ticket, "done")}"
   end
 
   def day_team
@@ -84,6 +92,12 @@ class CurrentBatch < Batch
 
   def user_ticket
     @api_data.dig('tickets')&.find { |ticket| ticket.dig('is_mine') }
+  end
+
+  def assigned_ticket(ticket)
+    return if ticket.dig('assigned', 'id').nil?
+
+    "x #{ ticket.dig('assigned', 'name')}"
   end
 
   def parse_batch_status
