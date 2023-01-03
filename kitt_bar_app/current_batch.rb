@@ -34,12 +34,14 @@ class CurrentBatch < Batch
   end
 
   def header
-    return if @errors.any? || @color == "gray"
+    return if @errors.any? || @color == "gray" || !batch_open?
 
   	"#{@slug} #{Color.send(@color)}#{[emoji, @ticket_count].join(" ")}#{Color.reset}"
   end
 
   def tickets
+    return puts "- Batch not started" unless batch_open?
+
 	  puts "- Tickets|size=12"
 
     @api_data.dig('tickets').each { |ticket|
@@ -59,7 +61,7 @@ class CurrentBatch < Batch
   end
 
   def day_team
-    return if @api_data['on_duties'].empty?
+    return if @api_data['on_duties']&.empty? || !batch_open?
 
     puts "- Teachers"
     @api_data['on_duties'].each { |teacher| puts "--#{teacher['name']}|href=https://kitt.lewagon.com#{teacher['teacher_path']}" }
@@ -101,8 +103,14 @@ class CurrentBatch < Batch
   end
 
   def parse_batch_status
+    return unless batch_open?
+
   	@color 			 	= @api_data['camp']['color'] == "grey" ? "gray" : @api_data['camp']['color']
   	@ticket_count = @api_data['tickets'].count
   	@lunch_break  = @api_data['camp']['on_lunch_break']
+  end
+
+  def batch_open?
+    @api_data.dig('status') != 500
   end
 end
