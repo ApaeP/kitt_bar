@@ -19,9 +19,9 @@ class CurrentBatch < Batch
     puts "#{menu_name}"
     end_ticket
     tickets
-	  # puts "- Calendar|href=#{calendar_url}|size=12"
-	  # puts "- Students|href=#{classmates_url}|size=12"
-    # day_team
+	  puts "- Calendar|href=#{calendar_url}|size=12"
+	  puts "- Students|href=#{classmates_url}|size=12"
+    day_team
   end
 
   def ticket
@@ -61,7 +61,7 @@ class CurrentBatch < Batch
   end
 
   def day_team
-    return if @api_data['on_duties'].empty?
+    return if @api_data['on_duties']&.empty? || !batch_open?
 
     puts "- Teachers"
     @api_data['on_duties'].each { |teacher| puts "--#{teacher['name']}|href=https://kitt.lewagon.com#{teacher['teacher_path']}" }
