@@ -103,7 +103,8 @@ class CurrentBatch < Batch
   end
 
   def parse_batch_status
-    return if @api_data.dig('status') == 500
+    return unless batch_open?
+
   	@color 			 	= @api_data['camp']['color'] == "grey" ? "gray" : @api_data['camp']['color']
   	@ticket_count = @api_data['tickets'].count
   	@lunch_break  = @api_data['camp']['on_lunch_break']
