@@ -16,7 +16,7 @@ class CurrentBatch < Batch
 
   def menu
 	  puts "---"
-    puts "#{menu_name}"
+    puts "#{menu_name}|font=bold"
     end_ticket
     tickets
 	  puts "- Calendar|href=#{calendar_url}|size=12"
