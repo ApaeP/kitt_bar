@@ -87,8 +87,8 @@ class CurrentBatch < Batch
   end
 
   def parse_batch_status
-  	@color 			 	= @api_data['camp']['color'] == "grey" ? "gray" : @api_data['camp']['color']
   	@ticket_count = @api_data['tickets'].count
   	@lunch_break  = @api_data['camp']['on_lunch_break']
+  	@color 			 	= @api_data.dig('camp', 'color') == "grey" ? "gray" : @api_data.dig('camp', 'color') || 'gray'
   end
 end
