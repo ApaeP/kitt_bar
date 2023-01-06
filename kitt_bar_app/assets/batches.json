@@ -1,0 +1,30 @@
+{
+  "current_batches": [
+    {
+      "slug": 984,
+      "type": "FT",
+      "cursus": "Web",
+      "city": "Paris"
+    }
+  ],
+  "old_batches": [
+    {
+      "slug": 1030,
+      "type": "FT",
+      "cursus": "Web",
+      "city": "Paris"
+    },
+    {
+      "slug": 940,
+      "type": "FT",
+      "cursus": "Web",
+      "city": "Paris"
+    },
+    {
+      "slug": 896,
+      "type": "FT",
+      "cursus": "Web",
+      "city": "Marseille"
+    }
+  ]
+}

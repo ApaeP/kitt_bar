@@ -8,22 +8,20 @@
 # <bitbar.image>https://kitt.lewagon.com/slack/slack-bot-logo.png</bitbar.image>
 # <bitbar.dependencies>Ruby</bitbar.dependencies>
 
+require "json"
+
+batches_serialized = File.read('kitt_bar_app/assets/batches.json')
+batches = JSON.parse(batches_serialized)
+CURRENT_BATCHES = batches.dig('current_batches').map{|batch| batch.transform_keys(&:to_sym)}
+OLD_BATCHES = batches.dig('old_batches').map{|batch| batch.transform_keys(&:to_sym)}
+
 File.read('.env').split("\n").each do |env_var|
   eval env_var
 end
-
-BATCH_INFOS = [
-  { slug: 1116, type: 'FT', cursus: 'Web', city: 'Paris'},
-  { slug: 984, type: 'FT', cursus: 'Web', city: 'Paris'}
-]
-
-OLD_BATCHES = [
-  { slug: 1030, type: 'FT', cursus: 'Web', city: 'Paris'}
-]
 
 KITT_COOKIE = KITT_USER_COOKIE
 
 require_relative 'kitt_bar_app/config/setup'
 require_relative 'kitt_bar_app/plugin'
 
-Plugin.run(BATCH_INFOS, OLD_BATCHES)
+Plugin.run(CURRENT_BATCHES, OLD_BATCHES)
