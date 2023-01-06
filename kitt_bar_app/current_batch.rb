@@ -17,8 +17,9 @@ class CurrentBatch < Batch
   def menu
 	  puts "---"
     puts "#{menu_name}"
+    puts "not started yet" unless batch_open?
     end_ticket
-    tickets
+    tickets if batch_open?
 	  puts "- Calendar|href=#{calendar_url}|size=12"
 	  puts "- Students|href=#{classmates_url}|size=12"
     day_team
@@ -40,17 +41,19 @@ class CurrentBatch < Batch
   end
 
   def tickets
-    return puts "- Batch not started" unless batch_open?
+    if @api_data.dig('tickets').empty?
+      puts "- No tickets yet|size=12"
+    else
+      puts "- Tickets|size=12"
 
-	  puts "- Tickets|size=12"
-
-    @api_data.dig('tickets').each { |ticket|
-      puts "-- #{ticket.dig('user', 'name')} #{assigned_ticket(ticket)}"
-      # url = "https://kitt.lewagon.com/api/v1/tickets/#{ticket.dig('id')}/take"
-      puts "---- #{Color.orange}take it !#{Color.reset} | #{HttpKitt.put(ticket, "take")}" if ticket.dig('policy', 'current_user_can_take')
-      puts "---- #{Color.green}mark as done !#{Color.reset} | #{HttpKitt.put(ticket, "done")}" if ticket.dig('policy', 'current_user_can_mark_as_solved')
-      puts "---- #{Color.red}cancel#{Color.reset} | #{HttpKitt.put(ticket, "cancel")}" if ticket.dig('policy', 'current_user_can_cancel')
-    }
+      @api_data.dig('tickets').each { |ticket|
+        puts "-- #{ticket.dig('user', 'name')} #{assigned_ticket(ticket)}"
+        # url = "https://kitt.lewagon.com/api/v1/tickets/#{ticket.dig('id')}/take"
+        puts "---- #{Color.orange}take it !#{Color.reset} | #{HttpKitt.put(ticket, "take")}" if ticket.dig('policy', 'current_user_can_take')
+        puts "---- #{Color.green}mark as done !#{Color.reset} | #{HttpKitt.put(ticket, "done")}" if ticket.dig('policy', 'current_user_can_mark_as_solved')
+        puts "---- #{Color.red}cancel#{Color.reset} | #{HttpKitt.put(ticket, "cancel")}" if ticket.dig('policy', 'current_user_can_cancel')
+      }
+    end
   end
 
   def end_ticket
@@ -111,6 +114,7 @@ class CurrentBatch < Batch
   end
 
   def batch_open?
-    @api_data.dig('status') != 500
+    # status is in api_data only when we don't have a 500 or 403
+    !@api_data&.dig('status')
   end
 end

@@ -1,6 +1,18 @@
 {
   "current_batches": [
     {
+      "slug": 1116,
+      "type": "FT",
+      "cursus": "Web",
+      "city": "Paris"
+    },
+    {
+      "slug": 1139,
+      "type": "FT",
+      "cursus": "Web",
+      "city": "Paris"
+    },
+    {
       "slug": 984,
       "type": "FT",
       "cursus": "Web",
