@@ -19,8 +19,8 @@ class CurrentBatch < Batch
     puts "#{menu_name}|font=bold"
     end_ticket
     tickets
-	  puts "- Calendar|href=#{calendar_url}|size=12"
-	  puts "- Students|href=#{classmates_url}|size=12"
+	  puts "🗓 Calendar|href=#{calendar_url}|size=12"
+	  puts "🧑‍🎓 Students|href=#{classmates_url}|size=12"
     day_team
   end
 
@@ -40,20 +40,20 @@ class CurrentBatch < Batch
   end
 
   def tickets
-	  puts "- Tickets|href=#{tickets_url}|size=12"    
+	  puts "🎟 Tickets|href=#{tickets_url}|size=12"    
   end
 
   def end_ticket
     return unless @ticket
 
     url = "https://kitt.lewagon.com/api/v1/tickets/#{@ticket['id']}/mark_as_solved"
-    puts "- Validate ticket|shell=\"#{__dir__}/ticket_validator.rb\" param1=#{KITT_COOKIE} param2=#{url}"
+    puts "✅ Validate ticket|shell=\"#{__dir__}/ticket_validator.rb\" param1=#{KITT_COOKIE} param2=#{url}"
   end
 
   def day_team
     return if @api_data['on_duties']&.empty? || @api_data['on_duties'].nil?
 
-    puts "- Teachers"
+    puts "🧑‍🏫 Teachers"
     @api_data['on_duties'].each { |teacher| puts "--#{teacher['name']}|href=https://kitt.lewagon.com#{teacher['teacher_path']}" }
   end
 
