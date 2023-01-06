@@ -8,4 +8,4 @@ CURRENT_DIR=`pwd`
 cp "${CURRENT_DIR}"/kitt_bar.3s.rb "${PLUGINS_PATH}"/kitt_bar.3s.rb
 cp "${CURRENT_DIR}"/.env "${PLUGINS_PATH}"/.env
 cp -R "${CURRENT_DIR}"/kitt_bar_app "${PLUGINS_PATH}"
-chmod +x "${CURRENT_DIR}"/kitt_bar_app/ticket_validator.rb
+chmod +x "${CURRENT_DIR}"/kitt_bar_app/config/kitt_request
