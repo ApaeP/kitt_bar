@@ -51,7 +51,7 @@ class CurrentBatch < Batch
   end
 
   def day_team
-    return if @api_data['on_duties'].empty?
+    return if @api_data['on_duties']&.empty? || @api_data['on_duties'].nil?
 
     puts "- Teachers"
     @api_data['on_duties'].each { |teacher| puts "--#{teacher['name']}|href=https://kitt.lewagon.com#{teacher['teacher_path']}" }
