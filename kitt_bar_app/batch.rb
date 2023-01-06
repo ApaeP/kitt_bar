@@ -7,7 +7,7 @@ class Batch
   end
 
   def menu_name
-    "##{@slug} #{menu_cursus} #{menu_type} - #{@city}|href=https://kitt.lewagon.com/camps/#{@slug}|"
+    "#{@slug} #{menu_cursus} #{menu_type} - #{@city}|href=https://kitt.lewagon.com/camps/#{@slug}|"
   end
 
   def type_color
