@@ -51,7 +51,7 @@ class CurrentBatch < Batch
   end
 
   def day_team
-    return if @api_data['on_duties']&.empty? || @api_data['on_duties'].nil?
+    return if @api_data.dig('on_duties')&.empty? || @api_data.dig('on_duties').nil?
 
     puts "🧑‍🏫 Teachers"
     @api_data['on_duties'].each { |teacher| puts "--#{teacher['name']}|href=https://kitt.lewagon.com#{teacher['teacher_path']}" }
@@ -88,7 +88,7 @@ class CurrentBatch < Batch
 
   def parse_batch_status
   	@color 			 	= @api_data.dig('camp', 'color') == "grey" ? "gray" : @api_data.dig('camp', 'color') || 'gray'
-  	@ticket_count = @api_data['tickets']&.count || -1
+  	@ticket_count = @api_data.dig('tickets')&.count || -1
   	@lunch_break  = @api_data.dig('camp', 'on_lunch_break') || false
   end
 end
