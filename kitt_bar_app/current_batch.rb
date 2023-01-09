@@ -16,11 +16,11 @@ class CurrentBatch < Batch
 
   def menu
 	  puts "---"
-    puts "#{menu_name}"
+    puts "#{menu_name}|font=bold"
     end_ticket
     tickets
-	  puts "- Calendar|href=#{calendar_url}|size=12"
-	  puts "- Students|href=#{classmates_url}|size=12"
+	  puts "🗓 Calendar|href=#{calendar_url}|size=12"
+	  puts "🧑‍🎓 Students|href=#{classmates_url}|size=12"
     day_team
   end
 
@@ -42,7 +42,7 @@ class CurrentBatch < Batch
   def tickets
     return puts "- Batch not started" unless batch_open?
 
-	  puts "- Tickets|size=12"
+	  puts "🎟 Tickets|href=#{tickets_url}|size=12"
 
     @api_data.dig('tickets').each { |ticket|
       puts "-- #{ticket.dig('user', 'name')} #{assigned_ticket(ticket)}"
@@ -55,15 +55,14 @@ class CurrentBatch < Batch
 
   def end_ticket
     return unless @ticket
-
-    # url = "https://kitt.lewagon.com/api/v1/tickets/#{@ticket['id']}/mark_as_solved"
-    puts "- Validate ticket with #{@ticket.dig('user','name')} | #{HttpKitt.put(@ticket, "done")}"
+    
+    puts "✅ Validate ticket with #{@ticket.dig('user','name')} | #{HttpKitt.put(@ticket, "done")}"
   end
 
   def day_team
     return if @api_data['on_duties']&.empty? || !batch_open?
 
-    puts "- Teachers"
+    puts "🧑‍🏫 Teachers"
     @api_data['on_duties'].each { |teacher| puts "--#{teacher['name']}|href=https://kitt.lewagon.com#{teacher['teacher_path']}" }
   end
 
@@ -104,10 +103,10 @@ class CurrentBatch < Batch
 
   def parse_batch_status
     return unless batch_open?
-
-  	@color 			 	= @api_data['camp']['color'] == "grey" ? "gray" : @api_data['camp']['color']
-  	@ticket_count = @api_data['tickets'].count
-  	@lunch_break  = @api_data['camp']['on_lunch_break']
+    
+  	@color 			 	= @api_data.dig('camp', 'color') == "grey" ? "gray" : @api_data.dig('camp', 'color') || 'gray'
+  	@ticket_count = @api_data.dig('tickets')&.count || -1
+  	@lunch_break  = @api_data.dig('camp', 'on_lunch_break') || false
   end
 
   def batch_open?
