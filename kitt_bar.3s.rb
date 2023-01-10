@@ -8,9 +8,6 @@
 # <bitbar.image>https://kitt.lewagon.com/slack/slack-bot-logo.png</bitbar.image>
 # <bitbar.dependencies>Ruby</bitbar.dependencies>
 
-File.read('.env').split("\n").each do |env_var|
-  eval env_var
-end
 require 'sqlite3'
 require 'fileutils'
 require_relative 'kitt_bar_app/config/setup'
