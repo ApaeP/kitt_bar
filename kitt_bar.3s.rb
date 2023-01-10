@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env /Users/paulportier/.rbenv/shims/ruby
 
 # <bitbar.title>Kitt Bar</bitbar.title>
 # <bitbar.version>v1.1</bitbar.version>
