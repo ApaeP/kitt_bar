@@ -11,6 +11,9 @@
 File.read('.env').split("\n").each do |env_var|
   eval env_var
 end
+require 'sqlite3'
+require 'fileutils'
+require_relative 'kitt_bar_app/config/setup'
 
 BATCH_INFOS = [
   { slug: 1116, type: 'FT', cursus: 'Web', city: 'Paris'},
@@ -21,9 +24,8 @@ OLD_BATCHES = [
   { slug: 1030, type: 'FT', cursus: 'Web', city: 'Paris'}
 ]
 
-KITT_COOKIE = KITT_USER_COOKIE
+KITT_COOKIE = SessionCookie.firefox
 
-require_relative 'kitt_bar_app/config/setup'
 require_relative 'kitt_bar_app/plugin'
 
 Plugin.run(BATCH_INFOS, OLD_BATCHES)
