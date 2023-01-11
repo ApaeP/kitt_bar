@@ -15,11 +15,11 @@ class CurrentBatch < Batch
 	  puts "---"
     puts "#{menu_name}|font=bold"
     if @api_data.dig('status') == 403
-      puts "No access to tickets 👮"
+      puts "👮 No access to tickets"
     elsif @api_data.dig('status') == 404
-      puts "Batch doesn't exist 💩"
+      puts "💩 Batch doesn't exist"
     elsif @api_data.dig('status') == 500
-      puts "Server error 🤖"
+      puts "🤖 Server error"
     end
     if batch_open?
       tickets
@@ -70,16 +70,18 @@ class CurrentBatch < Batch
   end
 
   def tickets
-    return if @api_data.dig('tickets').nil? || @api_data.dig('tickets').empty?
-
-	  puts "🎟 Tickets|href=#{tickets_url}|size=12"
-    @api_data.dig('tickets').each { |ticket|
-      puts "-- #{ticket.dig('user', 'name')} #{assigned_ticket(ticket)}"
-      # url = "https://kitt.lewagon.com/api/v1/tickets/#{ticket.dig('id')}/take"
-      puts "---- #{Color.orange}take it !#{Color.reset} | #{HttpKitt.put(ticket, "take")}" if ticket.dig('policy', 'current_user_can_take')
-      puts "---- #{Color.green}mark as done !#{Color.reset} | #{HttpKitt.put(ticket, "done")}" if ticket.dig('policy', 'current_user_can_mark_as_solved')
-      puts "---- #{Color.red}cancel#{Color.reset} | #{HttpKitt.put(ticket, "cancel")}" if ticket.dig('policy', 'current_user_can_cancel')
-    }
+    if @api_data.dig('tickets').nil? || @api_data.dig('tickets').empty?
+      puts "🎟 #{Color.gray}No tickets yet#{Color.reset}|href=#{tickets_url}|size=12"
+    else
+  	  puts "🎟 #{@api_data.dig('tickets').size} Ticket#{ 's' if @api_data.dig('tickets').size > 1 }|href=#{tickets_url}|size=12"
+      @api_data.dig('tickets').each { |ticket|
+        puts "-- #{ticket.dig('user', 'name')} #{assigned_ticket(ticket)}"
+        # url = "https://kitt.lewagon.com/api/v1/tickets/#{ticket.dig('id')}/take"
+        puts "---- #{Color.orange}take it !#{Color.reset} | #{HttpKitt.put(ticket, "take")}" if ticket.dig('policy', 'current_user_can_take')
+        puts "---- #{Color.green}mark as done !#{Color.reset} | #{HttpKitt.put(ticket, "done")}" if ticket.dig('policy', 'current_user_can_mark_as_solved')
+        puts "---- #{Color.red}cancel#{Color.reset} | #{HttpKitt.put(ticket, "cancel")}" if ticket.dig('policy', 'current_user_can_cancel')
+      }
+    end
   end
 
   def day_team
