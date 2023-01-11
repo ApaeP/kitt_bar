@@ -15,17 +15,13 @@ require 'json'
 
 require_relative 'kitt_bar_app/config/setup'
 
-BATCH_INFOS = [
-  { slug: 1116, type: 'FT', cursus: 'Web', city: 'Paris'},
-  { slug: 984, type: 'FT', cursus: 'Web', city: 'Paris'}
-]
+batches_serialized = File.read('kitt_bar_app/config/batches.json')
+batches            = JSON.parse(batches_serialized)
 
-OLD_BATCHES = [
-  { slug: 1030, type: 'FT', cursus: 'Web', city: 'Paris'}
-]
-
-KITT_COOKIE = SessionCookie.firefox
+CURRENT_BATCHES    = batches.dig('current_batches').map{|batch| batch.transform_keys(&:to_sym)}
+OLD_BATCHES        = batches.dig('old_batches').map{|batch| batch.transform_keys(&:to_sym)}
+KITT_COOKIE        = SessionCookie.firefox
 
 require_relative 'kitt_bar_app/plugin'
 
-Plugin.run(BATCH_INFOS, OLD_BATCHES)
+Plugin.run(CURRENT_BATCHES, OLD_BATCHES)
