@@ -26,7 +26,8 @@ BATCH_INFOS = [
 ]
 
 OLD_BATCHES = [
-  # Martinique
+  { slug: 940, type: 'FT', cursus: 'Web', city: 'Paris'},
+  { slug: 810, type: 'PT', cursus: 'Web', city: 'Paris'},
   { slug: 440, type: 'FT', cursus: 'Web', city: 'Paris'},
   { slug: 320, type: 'FT', cursus: 'Web', city: 'Paris'},
 ]
