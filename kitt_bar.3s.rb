@@ -1,16 +1,18 @@
 #!/usr/bin/env ruby
 
-# <bitbar.title>Kitt Bar</bitbar.title>
-# <bitbar.version>v1.1</bitbar.version>
-# <bitbar.author>Sébastien Saunier (extended by Paul Portier)</bitbar.author>
-# <bitbar.author.github>ssaunier (extended by @ApaeP)</bitbar.author.github>
-# <bitbar.desc>Kitt Bar (Le Wagon)</bitbar.desc>
-# <bitbar.image>https://kitt.lewagon.com/slack/slack-bot-logo.png</bitbar.image>
-# <bitbar.dependencies>Ruby</bitbar.dependencies>
+# <xbar.title>Kitt Bar</xbar.title>
+# <xbar.version>v1.1</xbar.version>
+# <xbar.author>Paul P, Paul L</xbar.author>
+# <xbar.author>@ApaeP, @paultursuru</xbar.author>
+# <xbar.desc>Kitt Plugin</xbar.desc>
+# <xbar.image>https://kitt.lewagon.com/slack/slack-bot-logo.png</xbar.image>
+# <xbar.dependencies>Ruby</xbar.dependencies>
 
 require 'sqlite3'
 require 'fileutils'
+require 'open3'
 require 'json'
+
 require_relative 'kitt_bar_app/config/setup'
 
 BATCH_INFOS = [

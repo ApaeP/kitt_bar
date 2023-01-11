@@ -1,5 +1,3 @@
-require 'open3'
-require 'json'
 require_relative 'batch'
 # `osascript -e'set Volume 10'; afplay #{File.join(File.dirname(__FILE__), 'assets/notification_sound.mp3')}`
 

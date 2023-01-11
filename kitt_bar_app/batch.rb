@@ -25,6 +25,7 @@ class Batch
     case @cursus
     when 'Web' then 32
     when 'Data Analytics' then 6
+    when 'Data Science' then 87
     end
   end
 
