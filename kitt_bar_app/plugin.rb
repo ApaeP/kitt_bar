@@ -3,36 +3,30 @@ require_relative 'old_batch'
 
 class Plugin
 	class << self
-		def run(batch_infos, old_batches_infos)
-			new(batch_infos, old_batches_infos).generate
+		def run(current_batches, old_batches)
+			new(current_batches, old_batches).generate
 		end
 	end
 
-	def initialize(batch_infos, old_batches_infos)
-		@batch_infos = batch_infos
-		@old_batches_info = old_batches_infos
+	def initialize(current_batches, old_batches)
+		@current_batches = current_batches
+		@old_batches_info = old_batches
 		initialize_batches
 		initialize_old_batches
 	end
 
 	def generate		
-		display_errors && return if network_error?
-		
 		header
 		menu
 		old_batches_menu
 	end
 
-	def display_errors
-		puts "❌ Error ❌".red
-		puts "---"
-		puts @batches.map(&:errors).join(', ')
-	end
-
 	private
 
 	def initialize_batches
-		@batches = @batch_infos.map { |batch_info| CurrentBatch.new(batch_info) }
+		@batches = @current_batches.map do |batch| 
+			CurrentBatch.new(batch)
+		end
 	end
 
 	def header
@@ -60,17 +54,12 @@ class Plugin
 	def initialize_old_batches
 		@old_batches = @old_batches_info
 			.sort_by { |e| e[:slug] }.reverse
-			.map { |batch_info| OldBatch.new(batch_info) }
+			.map { |batch| OldBatch.new(batch) }
 	end
 
 	def old_batches_menu
 		puts "---"
 		puts "Old batches"
 		@old_batches.each(&:menu)
-	end
-
-	def network_error?
-		return false
-		CurrentBatch.new(0).errors.any?
 	end
 end

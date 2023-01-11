@@ -1,5 +1,3 @@
-require 'net/http'
-require 'json'
 require_relative 'batch'
 
 class OldBatch < Batch
