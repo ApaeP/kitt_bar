@@ -7,7 +7,7 @@ class Batch
   end
 
   def menu_name
-    "##{@slug} #{menu_cursus} #{menu_type} - #{@city}|href=https://kitt.lewagon.com/camps/#{@slug}|"
+    "#{@slug} #{menu_cursus} #{menu_type} - #{@city}|href=https://kitt.lewagon.com/camps/#{@slug}|"
   end
 
   def type_color
@@ -25,6 +25,7 @@ class Batch
     case @cursus
     when 'Web' then 32
     when 'Data Analytics' then 6
+    when 'Data Science' then 87
     end
   end
 

@@ -1,6 +1,6 @@
 class HttpKitt
   def initialize
-    @kitt_cookie = KITT_USER_COOKIE
+    @kitt_cookie = KITT_COOKIE
     @base_url = "https://kitt.lewagon.com"
   end
 
