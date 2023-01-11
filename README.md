@@ -8,31 +8,57 @@
 ### Add a "last refresh" info line down the menu
 ### Try to set batches infos as [env variables from xbar config](https://github.com/matryer/xbar-plugins/blob/main/CONTRIBUTING.md#plugin-with-variables)
 
+
+
+
 --------------------------------------------------------------------------------------------------------------------------
-# Setup (Deprecated)
+# Setup
 
-## Fork and clone this repo
 
-### Configure your script
+## 1 - Fork and clone this repo
 
-Open the `kitt_bar.rb` file
 
-Update with your batch numbers (example):
-```ruby
-BATCH_INFOS = [
-  { slug: 1003, type: 'PT', cursus: 'Web', city: 'Paris'},
-  { slug: 1118, type: 'FT', cursus: 'Data Analytics', city: 'Paris'},
-  { slug: 1139, type: 'FT', cursus: 'Web', city: 'Toulouse'},
-]
+## 2 - Setup your batches
 
-OLD_BATCHES = [
-  { slug: 940, type: 'FT', cursus: 'Web', city: 'Paris'},
-  { slug: 810, type: 'PT', cursus: 'Web', city: 'Paris'},
-  { slug: 440, type: 'FT', cursus: 'Web', city: 'Paris'},
-  { slug: 320, type: 'FT', cursus: 'Web', city: 'Paris'},
-]
+Open the repo
+create `kitt_bar/kitt_bar_app/config/batches.json` file
+
+Fill it with the batches you want to have access to
+```json
+{
+  "current_batches":[
+    {
+      "slug":1139,
+      "type":"FT",
+      "cursus":"Web",
+      "city":"Toulouse"
+    },
+    {
+      "slug":1118,
+      "type":"FT",
+      "cursus":"Data Analytics",
+      "city":"Paris"
+    }
+  ],
+  "old_batches":[
+    {
+      "slug":993,
+      "type":"FT",
+      "cursus":"Web",
+      "city":"Martinique"
+    },
+    {
+      "slug":827,
+      "type":"FT",
+      "cursus":"Web",
+      "city":"Martinique"
+    }
+  ]
+}
 ```
-## Set up your script bar client
+
+
+## 3 - Set up your script bar client
 
 ### macOS
 
@@ -42,22 +68,19 @@ Install Bitbar:
 brew install --cask xbar
 ```
 
-Then launch the Xbar app (and chose to start the app at login).
+Launch the Xbar app (check start the app at login).
 
-Locate the xbar plugin folder (it should be in `/Users/your_username/Library/Application Support/xbar/plugins`)
-
-Open the `~/code/$GITHUB_USERNAME/xbar_plugins/kitt_bar/.env` file
-
-Make the `copy_to_plugins.sh` file executable with
+Make the `kitt_bar/copy_to_plugins.sh` file executable with
 ```bash
 chmod -x copy_to_plugins.sh
 ```
 
-And execute this bash file with
+Execute it
 ```bash
 ./copy_to_plugins.sh
 ```
-Finally refresh your Xbar app and tada 🥳
+
+Refresh your Xbar app and tada 🥳
 
 ### linux (WIP - 0%)
 
