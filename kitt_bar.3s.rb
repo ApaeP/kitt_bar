@@ -1,4 +1,4 @@
-#!/usr/bin/env /Users/paulportier/.rbenv/shims/ruby
+#!/usr/bin/env ruby
 
 # <bitbar.title>Kitt Bar</bitbar.title>
 # <bitbar.version>v1.1</bitbar.version>
@@ -10,6 +10,7 @@
 
 require 'sqlite3'
 require 'fileutils'
+require 'json'
 require_relative 'kitt_bar_app/config/setup'
 
 BATCH_INFOS = [
