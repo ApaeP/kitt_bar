@@ -18,7 +18,7 @@ class SessionCookie
     end
 
     def json_path
-      File.join(Dir.pwd, '/kitt_bar_app/config/cookies.json')
+      File.join(__dir__, '../data/cookies.json')
     end
 
     def current
@@ -59,7 +59,7 @@ class SessionCookie
     end
 
     def tmp_dir
-      Dir.pwd << '/kitt_bar_app/tmp'
+      File.join(Dir.pwd, '/tmp')
     end
 
     def delete_db_copies!
