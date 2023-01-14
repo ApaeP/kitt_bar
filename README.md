@@ -1,21 +1,7 @@
-# TODO
-### Find a way to decrypt chrome cookie value (MacOS)
-- Sqlite3 DB file location: ~/Library/Application\ Support/Google/Chrome/Default/Cookies
-- `SELECT value, encrypted_value FROM cookies WHERE name = "_kitt2017_";`
-  - value is empty
-  - To get Chrome Safe Storage password `security find-generic-password -ga "Chrome"`
-  - [some info here](https://stackoverflow.com/questions/57646301/decrypt-chrome-cookies-from-sqlite-db-on-mac-os)
-### Add a "last refresh" info line down the menu
-### Try to set batches infos as [env variables from xbar config](https://github.com/matryer/xbar-plugins/blob/main/CONTRIBUTING.md#plugin-with-variables)
-
-
-
-
---------------------------------------------------------------------------------------------------------------------------
 # Setup
 
 
-## 1 - Fork and clone this repo
+## 1 - Fork and clone this repo in your code repository
 
 
 ## 2 - Setup your batches
@@ -24,6 +10,8 @@ Open the repo
 create `kitt_bar/kitt_bar_app/config/batches.json` file
 
 Fill it with the batches you want to have access to
+(current_batches should be your incoming and ongoing batches, 
+and old_batches your batches that are finished)
 ```json
 {
   "current_batches":[
@@ -57,30 +45,33 @@ Fill it with the batches you want to have access to
 }
 ```
 
+## 3 - Kitt session setup
+As this script needs to authenticate you on Kitt in order to retrieve your current tickets, we need to get access to a Kitt session cookie.
+To do so, all you have to do is to login on Kitt once every 6 days on Mozilla Firefox.
 
-## 3 - Set up your script bar client
+(For now it only works with Firefox. We're trying to make it work with Chrome too, but chrome encrypts its cookies DB and we haven't yet succeded in decrypting it, Brave/Safari/Opera will be implemented later)
+
+## 4 - Set up your script bar client
 
 ### macOS
-
-Install Bitbar:
-
-```bash
-brew install --cask xbar
-```
-
-Launch the Xbar app (check start the app at login).
 
 Make the `kitt_bar/copy_to_plugins.sh` file executable with
 ```bash
 chmod -x copy_to_plugins.sh
 ```
-
-Execute it
+And execute it
 ```bash
 ./copy_to_plugins.sh
 ```
 
-Refresh your Xbar app and tada 🥳
+Install Xbar:
+```bash
+brew install --cask xbar
+```
+
+Launch the Xbar app (check start the app at login).
+Refresh your Xbar app and tada (supposedly) 🥳
+
 
 ### linux (WIP - 0%)
 
@@ -92,3 +83,19 @@ The equivalent of Bitbar for Linux is [Argos](https://github.com/p-e-w/argos).To
 rm ~/.config/argos/argos.sh
 ln -s ~/code/$GITHUB_USERNAME/kitt_bar/kitt_bar.rb ~/.config/argos/kitt_bar.rb
 ```
+
+
+# TODO
+### Find a way to decrypt chrome cookie value (MacOS)
+- Sqlite3 DB file location: ~/Library/Application\ Support/Google/Chrome/Default/Cookies
+- `SELECT value, encrypted_value FROM cookies WHERE name = "_kitt2017_";`
+  - value is empty
+  - To get Chrome Safe Storage password `security find-generic-password -ga "Chrome"`
+  - [some info here](https://stackoverflow.com/questions/57646301/decrypt-chrome-cookies-from-sqlite-db-on-mac-os)
+### Add a "last refresh" info line down the menu
+### Try to set batches infos as [env variables from xbar config](https://github.com/matryer/xbar-plugins/blob/main/CONTRIBUTING.md#plugin-with-variables)
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------
