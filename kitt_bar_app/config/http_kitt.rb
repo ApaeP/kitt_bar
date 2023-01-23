@@ -54,7 +54,3 @@ class HttpKitt
     "#{@base_url}#{path}"
   end
 end
-
-
-
-# PATCH https://kitt.lewagon.com/api/v1/camps/1116/on_duties/finish
