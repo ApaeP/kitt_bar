@@ -24,6 +24,7 @@ class CurrentBatch < Batch
     if batch_open?
       tickets
       day_team
+      toggle_duty
     end
 	  puts "🗓 Calendar|href=#{calendar_url}|size=12"
 	  puts "🧑‍🎓 Students|href=#{classmates_url}|size=12"
@@ -69,6 +70,18 @@ class CurrentBatch < Batch
     @api_data && @api_data.dig('status').nil?
   end
 
+  def toggle_duty
+    return unless @api_data['on_duties']
+
+    if @api_data.dig('on_duties').map { |on_duty| on_duty['id'] }.include?(@api_data.dig('current_user', 'id'))
+      puts "🟢 On duty"
+      puts "-- 🍕 take a break | #{HttpKitt.patch(@slug, "finish")}"
+    else
+      puts "🔴 Off duty"
+      puts "-- 💻 back to work | #{HttpKitt.post(@slug, "on_duties")}"
+    end
+  end
+
   def tickets
     if @api_data.dig('tickets').nil? || @api_data.dig('tickets').empty?
       puts "🎟 #{Color.gray}No tickets yet#{Color.reset}|href=#{tickets_url}|size=12"
@@ -93,7 +106,7 @@ class CurrentBatch < Batch
     end
   end
 
-  def end_ticket    
+  def end_ticket
     puts "✅ Validate ticket with #{@ticket.dig('user','name')} | #{HttpKitt.put(@ticket, "done")}"
   end
 
