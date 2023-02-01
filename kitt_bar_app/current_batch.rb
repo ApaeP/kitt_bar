@@ -138,7 +138,15 @@ class CurrentBatch < Batch
     ticket_header = []
     ticket_header << 'REMOTE' if ticket.dig('remote')
     ticket_header << (ticket.dig('table') ? ['table', ticket.dig('table')] : 'no table')
-    ticket_content = ticket.dig('content').gsub("\r\n", "").split('').each_slice(40).to_a.map(&:join)
+    ticket_content = ticket.dig('content').gsub("\r\n", "").split('').each_slice(40).to_a
+    ticket_content.each_with_index do |slice, index|
+      until slice.last == " " && slice.length < 40
+        break unless ticket_content[index + 1]
+        ticket_content[index + 1].unshift(slice.pop)
+      end
+    end
+    ticket_content = ticket_content.map(&:join).map(&:strip)
     [ticket_header.join(' '), ticket_content].flatten
   end
 end
+
