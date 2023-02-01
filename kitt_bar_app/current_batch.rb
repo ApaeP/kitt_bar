@@ -90,6 +90,7 @@ class CurrentBatch < Batch
       @api_data.dig('tickets').each { |ticket|
         puts "-- #{ticket.dig('user', 'name')} #{assigned_ticket(ticket)}"
         # url = "https://kitt.lewagon.com/api/v1/tickets/#{ticket.dig('id')}/take"
+        ticket_info(ticket).each { |line| puts "---- #{line}"}
         puts "---- #{Color.orange}take it !#{Color.reset} | #{HttpKitt.put(ticket, "take")}" if ticket.dig('policy', 'current_user_can_take')
         puts "---- #{Color.green}mark as done !#{Color.reset} | #{HttpKitt.put(ticket, "done")}" if ticket.dig('policy', 'current_user_can_mark_as_solved')
         puts "---- #{Color.red}cancel#{Color.reset} | #{HttpKitt.put(ticket, "cancel")}" if ticket.dig('policy', 'current_user_can_cancel')
@@ -108,6 +109,7 @@ class CurrentBatch < Batch
 
   def end_ticket
     puts "✅ Validate ticket with #{@ticket.dig('user','name')} | #{HttpKitt.put(@ticket, "done")}"
+    puts "Call #{@ticket.dig('user', 'name')} on Slack | href='slack://user?team=#{@ticket.dig("slack_team_id")}&id=#{@ticket.dig("owner_slack_uid")}'" if @ticket.dig("remote")
   end
 
   def tickets_url
@@ -131,4 +133,20 @@ class CurrentBatch < Batch
 
     "x #{ ticket.dig('assigned', 'name')}"
   end
+
+  def ticket_info(ticket)
+    ticket_header = []
+    ticket_header << 'REMOTE' if ticket.dig('remote')
+    ticket_header << (ticket.dig('table') ? ['table', ticket.dig('table')] : 'no table')
+    ticket_content = ticket.dig('content').gsub("\r\n", "").split('').each_slice(40).to_a
+    ticket_content.each_with_index do |slice, index|
+      until slice.last == " " && slice.length < 40
+        break unless ticket_content[index + 1]
+        ticket_content[index + 1].unshift(slice.pop)
+      end
+    end
+    ticket_content = ticket_content.map(&:join).map(&:strip)
+    [ticket_header.join(' '), ticket_content].flatten
+  end
 end
+
