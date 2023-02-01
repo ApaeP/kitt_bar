@@ -138,11 +138,20 @@ class CurrentBatch < Batch
     ticket_header = []
     ticket_header << 'REMOTE' if ticket.dig('remote')
     ticket_header << (ticket.dig('table') ? ['table', ticket.dig('table')] : 'no table')
-    ticket_content = ticket.dig('content').gsub("\r\n", "").split('').each_slice(40).to_a
+    ticket_content = ticket.dig('content').gsub('"', "").gsub("\r\n", "").split('').each_slice(40).to_a
     ticket_content.each_with_index do |slice, index|
-      until slice.last == " " && slice.length < 40
-        break unless ticket_content[index + 1]
+      loop do
+        break if  (slice.last == " " && slice.length <= 40) || # break if line is perfect
+                  (!slice.include?(" ")) || # break loop to go to cutting line
+                  (!ticket_content[index + 1]) # break if last line of message
         ticket_content[index + 1].unshift(slice.pop)
+      end
+      # when line is still too long with no space :
+      # 1. keep first part 2. give the rest to next line
+      if slice.length > 40
+        slice = ticket_content[index]
+        ticket_content[index] = slice.each_slice(40).to_a[0] # keep first part
+        ticket_content[index + 1].unshift(slice.each_slice(40).to_a.pop[0]) # give the rest to next line
       end
     end
     ticket_content = ticket_content.map(&:join).map(&:strip)
