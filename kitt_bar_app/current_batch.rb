@@ -147,7 +147,6 @@ class CurrentBatch < Batch
         ticket_content[index + 1].unshift(slice.pop)
       end
       # when line is still too long with no space :
-      # 1. keep first part 2. give the rest to next line
       if slice.length > 40
         slice = ticket_content[index]
         ticket_content[index] = slice.each_slice(40).to_a[0] # keep first part
