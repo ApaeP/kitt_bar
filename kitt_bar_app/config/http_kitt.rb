@@ -23,33 +23,33 @@ class HttpKitt
   end
 
   def put(ticket, action)
-    "shell=\"#{__dir__}/kitt_request\" param1=PUT param2=#{@kitt_cookie} param3=#{url_for({ticket: ticket, action: action})}"
+    "\"#{__dir__}/kitt_request\" param1=PUT param2=#{@kitt_cookie} param3=#{url_for({ticket: ticket, action: action})}"
   end
 
   def post(camp_slug, action)
-    "shell=\"#{__dir__}/kitt_request\" param1=POST param2=#{@kitt_cookie} param3=#{url_for({camp_slug: camp_slug, action: action})}"
+    "\"#{__dir__}/kitt_request\" param1=POST param2=#{@kitt_cookie} param3=#{url_for({camp_slug: camp_slug, action: action})}"
   end
 
   def patch(camp_slug, action)
-    "shell=\"#{__dir__}/kitt_request\" param1=PATCH param2=#{@kitt_cookie} param3=#{url_for({camp_slug: camp_slug, action: action})}"
+    "\"#{__dir__}/kitt_request\" param1=PATCH param2=#{@kitt_cookie} param3=#{url_for({camp_slug: camp_slug, action: action})}"
   end
 
   def url_for(params = {})
     case params[:action]
     when "done"
-      path = params[:ticket].dig("routes", "mark_as_solved_api_v1_ticket_path")
+      path = params[:ticket].mark_as_solved_api_v1_ticket_path
     when "take"
-      path = params[:ticket].dig("routes", "take_api_v1_ticket_path")
+      path = params[:ticket].take_api_v1_ticket_path
     when "cancel"
-      path = params[:ticket].dig("routes", "cancel_api_v1_ticket_path")
+      path = params[:ticket].cancel_api_v1_ticket_path
     when "leave"
-      path = params[:ticket].dig("routes", "leave_api_v1_ticket_path")
+      path = params[:ticket].leave_api_v1_ticket_path
     when "on_duties"
       path = "/api/v1/camps/#{params[:camp_slug]}/on_duties"
     when "finish"
       path = "/api/v1/camps/#{params[:camp_slug]}/on_duties/finish"
     else
-      path = params[:ticket].dig("routes", "api_v1_ticket_path")
+      path = params[:ticket].api_v1_ticket_path
     end
     "#{@base_url}#{path}"
   end
