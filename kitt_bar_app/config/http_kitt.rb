@@ -35,21 +35,21 @@ class HttpKitt
   end
 
   def url_for(params = {})
-    case params[:action]
+    path = case params[:action]
     when "done"
-      path = params[:ticket].mark_as_solved_api_v1_ticket_path
+      params[:ticket].mark_as_solved_api_v1_ticket_path
     when "take"
-      path = params[:ticket].take_api_v1_ticket_path
+      params[:ticket].take_api_v1_ticket_path
     when "cancel"
-      path = params[:ticket].cancel_api_v1_ticket_path
+      params[:ticket].cancel_api_v1_ticket_path
     when "leave"
-      path = params[:ticket].leave_api_v1_ticket_path
+      params[:ticket].leave_api_v1_ticket_path
     when "on_duties"
-      path = "/api/v1/camps/#{params[:camp_slug]}/on_duties"
+      "/api/v1/camps/#{params[:camp_slug]}/on_duties"
     when "finish"
-      path = "/api/v1/camps/#{params[:camp_slug]}/on_duties/finish"
+      "/api/v1/camps/#{params[:camp_slug]}/on_duties/finish"
     else
-      path = params[:ticket].api_v1_ticket_path
+      params[:ticket].api_v1_ticket_path
     end
     "#{@base_url}#{path}"
   end
