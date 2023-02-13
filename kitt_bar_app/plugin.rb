@@ -1,5 +1,7 @@
 require_relative 'current_batch'
 require_relative 'old_batch'
+require_relative 'view'
+
 
 class Plugin
 	class << self
@@ -9,13 +11,14 @@ class Plugin
 	end
 
 	def initialize(current_batches, old_batches)
-		@current_batches = current_batches
+    @view = View.new
+		@current_batches  = current_batches
 		@old_batches_info = old_batches
 		initialize_batches
 		initialize_old_batches
 	end
 
-	def generate		
+	def generate
 		header
 		menu
 		old_batches_menu
@@ -24,7 +27,8 @@ class Plugin
 	private
 
 	def initialize_batches
-		@batches = @current_batches.map do |batch| 
+		@batches = @current_batches.map do |batch|
+      batch[:view] = @view
 			CurrentBatch.new(batch)
 		end
 	end

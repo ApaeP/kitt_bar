@@ -16,25 +16,26 @@ class Ticket
               :take_api_v1_ticket_path
 
   def initialize(attr = {})
-    @content = attr["content"]
-    @table = attr["table"]
-    @student = attr["user"]["name"]
-    @teacher =  attr["assigned"]["name"]  if attr["assigned"]
-    @is_mine = attr["is_mine"]
-    @remote = attr["remote"]
-    @exercice_name = attr["exercice_name"]
-    @owner_slack_uid = attr["owner_slack_uid"]
-    @slack_team_id = attr["slack_team_id"]
-    @current_user_can_take = attr["policy"]["current_user_can_take"]
-    @current_user_can_leave = attr["policy"]["current_user_can_leave"]
-    @current_user_can_update = attr["policy"]["current_user_can_update"]
-    @current_user_can_cancel = attr["policy"]["current_user_can_cancel"]
-    @current_user_can_mark_as_solved = attr["policy"]["current_user_can_mark_as_solved"]
-    @api_v1_ticket_path = attr["routes"]["api_v1_ticket_path"]
-    @cancel_api_v1_ticket_path = attr["routes"]["cancel_api_v1_ticket_path"]
-    @mark_as_solved_api_v1_ticket_path = attr["routes"]["mark_as_solved_api_v1_ticket_path"]
-    @leave_api_v1_ticket_path = attr["routes"]["leave_api_v1_ticket_path"]
-    @take_api_v1_ticket_path = attr["routes"]["take_api_v1_ticket_path"]
+    @view = attr.dig(:view)
+    @content = attr.dig(:content)
+    @table = attr.dig(:table)
+    @student = attr.dig(:user, :name)
+    @teacher =  attr.dig(:assigned, :name)
+    @is_mine = attr.dig(:is_mine)
+    @remote = attr.dig(:remote)
+    @exercice_name = attr.dig(:exercice_name)
+    @owner_slack_uid = attr.dig(:owner_slack_uid)
+    @slack_team_id = attr.dig(:slack_team_id)
+    @current_user_can_take = attr.dig(:policy, :current_user_can_take)
+    @current_user_can_leave = attr.dig(:policy, :current_user_can_leave)
+    @current_user_can_update = attr.dig(:policy, :current_user_can_update)
+    @current_user_can_cancel = attr.dig(:policy, :current_user_can_cancel)
+    @current_user_can_mark_as_solved = attr.dig(:policy, :current_user_can_mark_as_solved)
+    @api_v1_ticket_path = attr.dig(:routes, :api_v1_ticket_path)
+    @cancel_api_v1_ticket_path = attr.dig(:routes, :cancel_api_v1_ticket_path)
+    @mark_as_solved_api_v1_ticket_path = attr.dig(:routes, :mark_as_solved_api_v1_ticket_path)
+    @leave_api_v1_ticket_path = attr.dig(:routes, :leave_api_v1_ticket_path)
+    @take_api_v1_ticket_path = attr.dig(:routes, :take_api_v1_ticket_path)
   end
 
   def slack_url
@@ -49,6 +50,39 @@ class Ticket
 
   def header
     "#{'REMOTE | ' if self.is_remote?}#{self.table ? "table #{self.table}" : 'no table'}"
+  end
+
+  def plugin_header
+    "#{self.student} @ table #{self.table}"
+  end
+
+  def is_remote?
+    @remote
+  end
+
+  def is_mine?
+    @is_mine
+  end
+
+  def close!
+    @view.append_with(body: "✅ Validate ticket with #{self.student}", shell: HttpKitt.put(self, "done"))
+  end
+
+  def init_slack
+    @view.append_with(body: "Call #{self.student} on Slack", href: self.slack_url)
+  end
+
+  def append_body_and_actions
+    @view.append_with(body: "-- #{self.student} #{self.assigned_teacher}")
+    @view.append_with(body: "---- #{self.header}")
+    self.content_formalized.each { |line| @view.append_with(body: "---- #{line}")}
+    @view.append_with(body: "---- take it !", color: 'orange', shell: HttpKitt.put(self, "take")) if self.current_user_can_take
+    @view.append_with(body: "---- mark as done !", color: 'green', shell: HttpKitt.put(self, "done")) if self.current_user_can_mark_as_solved
+    @view.append_with(body: "---- cancel", color: 'red', shell: HttpKitt.put(self, "cancel")) if self.current_user_can_cancel
+  end
+
+  def sanitize
+    self.content.gsub("\n", " ").gsub("\r", " ").gsub('"', "'").gsub('#{', "{")
   end
 
   def content_formalized
@@ -73,17 +107,5 @@ class Ticket
       end
     end
     ticket_content.map(&:join).map(&:strip)
-  end
-
-  def is_remote?
-    @remote
-  end
-
-  def is_mine?
-    @is_mine
-  end
-
-  def sanitize
-    self.content.gsub("\n", " ").gsub("\r", " ").gsub('"', "'").gsub('#{', "{")
   end
 end

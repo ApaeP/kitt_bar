@@ -1,6 +1,5 @@
 require_relative 'batch'
 require_relative 'ticket'
-require_relative 'view'
 # `osascript -e'set Volume 10'; afplay #{File.join(File.dirname(__FILE__), 'assets/notification_sound.mp3')}`
 
 class CurrentBatch < Batch
@@ -8,7 +7,6 @@ class CurrentBatch < Batch
 
   def initialize(attr = {})
     super
-    @view       = View.new
     @api_data   = fetch_api_data
     @api_status = set_api_status
     @tickets    = generate_tickets
@@ -19,13 +17,7 @@ class CurrentBatch < Batch
   def menu
     @view.separator
     @view.append_with(body: menu_name, font: 'bold')
-    if @api_status == 403
-      @view.append_with(body: "👮 No access to tickets")
-    elsif @api_status == 404
-      @view.append_with(body: "💩 Batch doesn't exist")
-    elsif @api_status == 500
-      @view.append_with(body: "🤖 Server error")
-    end
+    append_batch_status
     if batch_open?
       tickets
       day_team
@@ -33,13 +25,14 @@ class CurrentBatch < Batch
     end
     @view.append_with(body: '🗓 Calendar', href: calendar_url, size: 12)
     @view.append_with(body: '🧑‍🎓 Classmates', href: classmates_url, size: 12)
-    end_ticket if @ticket
+    @ticket&.close!
+    @ticket&.init_slack if @ticket&.is_remote?
   end
 
   def ticket
     return unless @ticket
 
-    "#{@ticket.student} @ table #{@ticket.table}"
+    @ticket.plugin_header
   end
 
   def header
@@ -54,19 +47,19 @@ class CurrentBatch < Batch
     url = "https://kitt.lewagon.com/api/v1/camps/#{@slug}/tickets"
 
     request = Open3.capture3("curl --cookie \"#{KITT_COOKIE}\" #{url}").first
-    JSON.parse(request)
+    JSON.parse(request, symbolize_names: true)
   rescue
-    {'status' => 500}
+    {status: 500}
   end
 
   def user_ticket
-    @tickets&.find { |ticket| ticket.is_mine? }
+    @tickets&.find(&:is_mine?)
   end
 
   def parse_batch_status
-  	@color 			 	= @api_data.dig('camp', 'color') == "grey" ? "gray" : @api_data.dig('camp', 'color') || 'gray'
+  	@color 			 	= @api_data.dig(:camp, :color) == "grey" ? "gray" : @api_data.dig(:camp, :color) || 'gray'
   	@ticket_count = @tickets&.count || -1
-  	@lunch_break  = @api_data.dig('camp', 'on_lunch_break') || false
+  	@lunch_break  = @api_data.dig(:camp, :on_lunch_break) || false
   end
 
   def batch_open?
@@ -74,11 +67,11 @@ class CurrentBatch < Batch
   end
 
   def toggle_duty
-    return unless @api_data['on_duties']
+    return unless @api_data[:on_duties]
 
     if current_user_in_on_duty?
       @view.append_with(body: "🟢 On duty")
-      @view.append_with(body: "-- 🍕 take a break", shell: HttpKitt.patch(@slug, "finish"))
+      @view.append_with(body: "-- 🥱 take a break", shell: HttpKitt.patch(@slug, "finish"))
     else
       @view.append_with(body: "🔴 Off duty")
       @view.append_with(body: "-- 💻 back to work", shell: HttpKitt.post(@slug, "on_duties"))
@@ -91,12 +84,7 @@ class CurrentBatch < Batch
     else
       @view.append_with(body: "🎟 #{@tickets.size} Ticket#{ 's' if @tickets.size > 1 }", href: tickets_url, size: 12)
       @tickets.each { |ticket|
-        @view.append_with(body: "-- #{ticket.student} #{ticket.assigned_teacher}")
-        @view.append_with(body: "---- #{ticket.header}")
-        ticket.content_formalized.each { |line| @view.append_with(body: "---- #{line}")}
-        @view.append_with(body: "---- take it !", color: 'orange', shell: HttpKitt.put(ticket, "take")) if ticket.current_user_can_take
-        @view.append_with(body: "---- mark as done !", color: 'green', shell: HttpKitt.put(ticket, "done")) if ticket.current_user_can_mark_as_solved
-        @view.append_with(body: "---- cancel", color: 'red', shell: HttpKitt.put(ticket, "cancel")) if ticket.current_user_can_cancel
+        ticket.append_body_and_actions
       }
     end
   end
@@ -108,11 +96,6 @@ class CurrentBatch < Batch
     @api_data['on_duties'].each do |teacher|
       @view.append_with(body: "--#{teacher['name']}", href: "https://kitt.lewagon.com#{teacher['teacher_path']}")
     end
-  end
-
-  def end_ticket
-    @view.append_with(body: "✅ Validate ticket with #{@ticket.student}", shell: HttpKitt.put(@ticket, "done"))
-    @view.append_with(body: "Call #{@ticket.student} on Slack", href: "slack://user?team=#{@ticket.slack_team_id}&id=#{@ticket.owner_slack_uid}") if @ticket.is_remote?
   end
 
   def tickets_url
@@ -132,17 +115,29 @@ class CurrentBatch < Batch
   end
 
   def generate_tickets
-    return [] unless @api_data['tickets']
+    return [] unless @api_data[:tickets]
 
-    @api_data.dig('tickets').map {|ticket_data| Ticket.new(ticket_data)}
+    @api_data.dig(:tickets).map {|ticket_data|
+      ticket_data[:view] = @view
+      Ticket.new(ticket_data)
+    }
   end
 
   def set_api_status
-    @api_data.dig('status')
+    @api_data.dig(:status)
+  end
+
+  def append_batch_status
+    batch_status = {
+      403 => "👮 No access to tickets",
+      404 => "💩 Batch doesn't exist",
+      500 => "🤖 Server error"
+    }.dig(@api_status)
+    @view.append_with(body: batch_status, color: 'red') if batch_status
   end
 
   def current_user_in_on_duty?
-    @api_data.dig('on_duties').map { |on_duty| on_duty['id'] }.include?(@api_data.dig('current_user', 'id'))
+    @api_data.dig(:on_duties).map { |on_duty| on_duty[:id] }.include?(@api_data.dig(:current_user, :id))
   end
 end
 
