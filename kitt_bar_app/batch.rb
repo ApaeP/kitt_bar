@@ -4,6 +4,7 @@ class Batch
     @type = attr[:type]
     @city = attr[:city]
     @cursus = attr[:cursus]
+    @view = attr[:view]
   end
 
   def menu_name
