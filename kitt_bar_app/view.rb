@@ -11,4 +11,64 @@ class View
   def separator
     puts "---"
   end
+
+  def generate_old_batch_menu(batch)
+    append_with(body: "-- #{batch.menu_name}", href: batch.camp_url, size: 11)
+    append_with(body: "---- Calendar", href: batch.calendar_url, size: 11)
+    append_with(body: "---- Students", href: batch.classmates_url, size: 11)
+    append_with(body: "---- Feedbacks", href: batch.feedbacks_url, size: 11)
+  end
+
+  def generate_batch_name_and_status(batch)
+    append_with(body: "#{batch.menu_name}", href: batch.camp_url, font: 'bold')
+    append_with(body: batch.batch_status, color: 'red') if batch.batch_status
+  end
+
+  def generate_batch_calendar_and_students(batch)
+    append_with(body: '🗓 Calendar', href: batch.calendar_url, size: 11)
+    append_with(body: '🧑‍🎓 Classmates', href: batch.classmates_url, size: 11)
+  end
+
+  def append_tickets(batch_tickets, batch, tickets_url)
+    if batch_tickets.empty?
+      append_with(body: "🎟 No tickets yet", href: tickets_url, size: 11, color: "gray")
+    else
+      append_with(body: "🎟 #{batch_tickets.size} Ticket#{ 's' if batch_tickets.size > 1 }", href: tickets_url, size: 11)
+      batch_tickets.each { |ticket|
+        append_a_ticket(ticket)
+      }
+    end
+  end
+
+  def append_a_ticket(ticket)
+    append_with(body: "-- #{ticket.student} #{ticket.assigned_teacher}", size: 11)
+    append_with(body: "---- #{ticket.header}", size: 11)
+    ticket.content_formalized.each { |line| append_with(body: "---- #{line}", size: 11)}
+    append_with(body: "---- take it !", color: 'orange', size: 11, shell: HttpKitt.put(ticket, "take")) if ticket.current_user_can_take
+    append_with(body: "---- mark as done !", color: 'green', size: 11, shell: HttpKitt.put(ticket, "done")) if ticket.current_user_can_mark_as_solved
+    append_with(body: "---- cancel", color: 'red', size: 11, shell: HttpKitt.put(ticket, "cancel")) if ticket.current_user_can_cancel
+  end
+
+  def append_day_team(team_hash)
+    append_with(body: "🧑‍🏫 Teachers", size: 11)
+    team_hash.each do |teacher|
+      append_with(body: "--#{teacher[:name]}", href: "https://kitt.lewagon.com#{teacher[:teacher_path]}", size: 11)
+    end
+  end
+
+  def append_toggle_duty(batch, current_user_status)
+    if current_user_status
+      append_with(body: "🟢 On duty", size: 11)
+      append_with(body: "-- 🥱 take a break", shell: HttpKitt.patch(batch.slug, "finish"), size: 11)
+    else
+      append_with(body: "🔴 Off duty", size: 11)
+      append_with(body: "-- 💻 back to work", shell: HttpKitt.post(batch.slug, "on_duties"), size: 11)
+    end
+  end
+
+  def append_current_ticket(ticket)
+    append_with(body: "✅ Validate ticket with #{ticket.student}", shell: HttpKitt.put(ticket, "done"), size: 11)
+    append_with(body: "Call #{ticket.student} on Slack", href: ticket.slack_url, size: 11) if ticket.is_remote?
+  end
 end
+

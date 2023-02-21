@@ -64,23 +64,6 @@ class Ticket
     @is_mine
   end
 
-  def close!
-    @view.append_with(body: "✅ Validate ticket with #{self.student}", shell: HttpKitt.put(self, "done"))
-  end
-
-  def init_slack
-    @view.append_with(body: "Call #{self.student} on Slack", href: self.slack_url)
-  end
-
-  def append_body_and_actions
-    @view.append_with(body: "-- #{self.student} #{self.assigned_teacher}")
-    @view.append_with(body: "---- #{self.header}")
-    self.content_formalized.each { |line| @view.append_with(body: "---- #{line}")}
-    @view.append_with(body: "---- take it !", color: 'orange', shell: HttpKitt.put(self, "take")) if self.current_user_can_take
-    @view.append_with(body: "---- mark as done !", color: 'green', shell: HttpKitt.put(self, "done")) if self.current_user_can_mark_as_solved
-    @view.append_with(body: "---- cancel", color: 'red', shell: HttpKitt.put(self, "cancel")) if self.current_user_can_cancel
-  end
-
   def sanitize
     self.content.gsub("\n", " ").gsub("\r", " ").gsub('"', "'").gsub('#{', "{")
   end

@@ -8,7 +8,7 @@ class Batch
   end
 
   def menu_name
-    "#{@slug} #{menu_cursus} #{menu_type} - #{@city}|href=https://kitt.lewagon.com/camps/#{@slug}|"
+    "#{@slug} #{menu_cursus} #{menu_type} - #{@city}"
   end
 
   def type_color
@@ -38,11 +38,15 @@ class Batch
     "#{Color.base(32)}##{@city}#{Color.reset}"
   end
 
+  def camp_url
+    "https://kitt.lewagon.com/camps/#{@slug}"
+  end
+
   def classmates_url
-    "https://kitt.lewagon.com/camps/#{@slug}/classmates"
+    "#{camp_url}/classmates"
   end
 
   def calendar_url
-    "https://kitt.lewagon.com/camps/#{@slug}/calendar"
+    "#{camp_url}/calendar"
   end
 end

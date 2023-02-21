@@ -20,7 +20,7 @@ class Plugin
 
 	def generate
 		header
-		menu
+		current_batch_menus
 		old_batches_menu
 	end
 
@@ -51,8 +51,22 @@ class Plugin
 		@batches.map(&:header).compact
 	end
 
-	def menu
-		@batches.each(&:menu)
+	def current_batch_menus
+		@batches.each do |batch|
+      @view.separator
+      @view.generate_batch_name_and_status(batch)
+      if batch.batch_open?
+        @view.append_tickets(batch.tickets, batch, batch.tickets_url)
+        if batch.day_team
+          @view.append_day_team(batch.day_team) if batch.has_team_members?
+          @view.append_toggle_duty(batch, batch.current_user_is_on_duty?)
+        end
+      end
+      @view.generate_batch_calendar_and_students(batch)
+      if ticket = batch.ticket
+        @view.append_current_ticket(ticket)
+      end
+    end
 	end
 
 	def initialize_old_batches
@@ -62,8 +76,8 @@ class Plugin
 	end
 
 	def old_batches_menu
-		puts "---"
-		puts "Old batches"
-		@old_batches.each(&:menu)
+    @view.separator
+    @view.append_with(body: "Old Batches")
+		@old_batches.each {|batch| @view.generate_old_batch_menu(batch)}
 	end
 end
