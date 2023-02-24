@@ -15,8 +15,8 @@ class CurrentBatch < Batch
     @batch_status = get_batch_status
     parse_batch_status
   end
-  
-  def ticket
+
+  def current_ticket
     return unless @ticket
 
     @ticket.plugin_header
