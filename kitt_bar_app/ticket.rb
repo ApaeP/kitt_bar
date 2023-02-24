@@ -49,7 +49,7 @@ class Ticket
   end
 
   def header
-    "#{'REMOTE | ' if self.is_remote?}#{self.table ? "table #{self.table}" : 'no table'}"
+    "#{'REMOTE - ' if self.is_remote?}#{self.table ? "table #{self.table}" : 'no table'}"
   end
 
   def plugin_header
@@ -65,7 +65,7 @@ class Ticket
   end
 
   def sanitize
-    self.content.gsub("\n", " ").gsub("\r", " ").gsub('"', "'").gsub('#{', "{")
+    self.content.gsub(/[\n\r"#:{}|]/, "")
   end
 
   def content_formalized

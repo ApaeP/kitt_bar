@@ -44,7 +44,7 @@ class Plugin
 	end
 
 	def tickets
-		@batches.map(&:ticket).compact.join(', ')
+		@batches.map(&:current_ticket).compact.join(', ')
 	end
 
 	def batch_headers
