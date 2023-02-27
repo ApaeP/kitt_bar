@@ -63,7 +63,11 @@ class View
       append_with(body: "-- 🥱 take a break", shell: HttpKitt.patch(batch.slug, "finish"))
     else
       append_with(body: "🔴 Off duty")
-      append_with(body: "-- 💻 back to work", shell: HttpKitt.post(batch.slug, "on_duties"))
+      if batch.is_project_week?
+        append_with(body: "-- 💻 back to work - projects", shell: HttpKitt.post(batch.slug, "on_duties_projects"))
+      else
+        append_with(body: "-- 💻 back to work", shell: HttpKitt.post(batch.slug, "on_duties"))
+      end
     end
   end
 

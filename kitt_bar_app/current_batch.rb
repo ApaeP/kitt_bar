@@ -44,6 +44,10 @@ class CurrentBatch < Batch
     @api_data[:on_duties]
   end
 
+  def is_project_week?
+    @api_data.dig(:camp, :team_day)
+  end
+
   private
 
   def fetch_api_data

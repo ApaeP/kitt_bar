@@ -7,11 +7,12 @@
 ## 2 - Setup your batches
 
 Open the repo
-create `kitt_bar/kitt_bar_app/config/batches.json` file
+create `kitt_bar/kitt_bar_app/config/settings.json` file
 
 Fill it with the batches you want to have access to
-(current_batches should be your incoming and ongoing batches, 
-and old_batches your batches that are finished)
+(current_batches should be your incoming and ongoing batches,
+and old_batches your batches that are finished) and the skills
+you want to select for project weeks. (don't change the skill_id!)
 ```json
 {
   "current_batches":[
@@ -40,6 +41,28 @@ and old_batches your batches that are finished)
       "type":"FT",
       "cursus":"Web",
       "city":"Martinique"
+    }
+  ],
+  "skills": [
+    {
+      "rails/project": [
+        {
+          "skill_id": 4,
+          "can_do": true
+        }
+      ],
+      "js": [
+        {
+          "skill_id": 7,
+          "can_do": true
+        }
+      ],
+      "html/css": [
+        {
+          "skill_id": 5,
+          "can_do": true
+        }
+      ]
     }
   ]
 }
