@@ -46,6 +46,8 @@ class HttpKitt
       params[:ticket].leave_api_v1_ticket_path
     when "on_duties"
       "/api/v1/camps/#{params[:camp_slug]}/on_duties"
+    when "on_duties_projects"
+      "/api/v1/camps/#{params[:camp_slug]}/on_duties?skill_ids=#{SKILLS}"
     when "finish"
       "/api/v1/camps/#{params[:camp_slug]}/on_duties/finish"
     else

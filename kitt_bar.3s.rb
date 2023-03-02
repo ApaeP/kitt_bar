@@ -15,11 +15,12 @@ require 'json'
 
 require_relative 'kitt_bar_app/config/setup'
 
-batches_serialized = File.read('kitt_bar_app/config/batches.json')
+batches_serialized = File.read('kitt_bar_app/config/settings.json')
 batches            = JSON.parse(batches_serialized)
 
 CURRENT_BATCHES    = batches.dig('current_batches').map{|batch| batch.transform_keys(&:to_sym)}
 OLD_BATCHES        = batches.dig('old_batches').map{|batch| batch.transform_keys(&:to_sym)}
+SKILLS             = batches.dig('skills').first.values.flatten.map{|skill| skill.dig("skill_id") if skill.dig("can_do")}.join(",")
 KITT_COOKIE        = SessionCookie.firefox
 
 require_relative 'kitt_bar_app/plugin'
