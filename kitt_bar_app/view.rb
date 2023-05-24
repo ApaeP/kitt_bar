@@ -71,6 +71,16 @@ class View
     end
   end
 
+  def append_toggle_lunch(batch)
+    if batch.is_on_lunch_break?
+      append_with(body: "🍔 Lunch break in #{batch.lunch_end_in_minutes} minutes")
+      append_with(body: "-- 💻 back to work !",  shell: HttpKitt.patch(batch.slug, "toggle_lunch"))
+    else
+      append_with(body: "💻 Working hard")
+      append_with(body: "-- 🍔 lunch break !",  shell: HttpKitt.patch(batch.slug, "toggle_lunch"))
+    end
+  end
+
   def append_current_ticket(ticket)
     append_with(body: "✅ Validate ticket with #{ticket.student}", shell: HttpKitt.put(ticket, "done"))
     append_with(body: "Call #{ticket.student} on Slack", href: ticket.slack_url) if ticket.is_remote?

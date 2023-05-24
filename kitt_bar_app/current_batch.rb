@@ -3,7 +3,7 @@ require_relative 'ticket'
 # `osascript -e'set Volume 10'; afplay #{File.join(File.dirname(__FILE__), 'assets/notification_sound.mp3')}`
 
 class CurrentBatch < Batch
-  attr_reader :slug, :lunch_break, :ticket_count, :color, :errors, :batch_status, :tickets, :ticket, :tickets_url
+  attr_reader :slug, :lunch_break, :lunch_ends, :ticket_count, :color, :errors, :batch_status, :tickets, :ticket, :tickets_url
 
   def initialize(attr = {})
     super
@@ -40,12 +40,24 @@ class CurrentBatch < Batch
     @api_data.dig(:on_duties).map { |on_duty| on_duty[:id] }.include?(@api_data.dig(:current_user, :id))
   end
 
+  def current_user_can_lunch_break?
+    @api_data.dig(:policy, :current_user_can_toggle_break)
+  end
+
   def day_team
     @api_data[:on_duties]
   end
 
   def is_project_week?
-    @api_data.dig(:camp, :team_day)
+    @api_data.dig(:camp, :skilled_ticket)
+  end
+
+  def is_on_lunch_break?
+    @lunch_break
+  end
+
+  def lunch_end_in_minutes
+    (Time.parse(@lunch_ends) - Time.now).fdiv(60).round
   end
 
   private
@@ -67,6 +79,7 @@ class CurrentBatch < Batch
   	@color 			 	= @api_data.dig(:camp, :color) == "grey" ? "gray" : @api_data.dig(:camp, :color) || 'gray'
   	@ticket_count = @tickets&.count || -1
   	@lunch_break  = @api_data.dig(:camp, :on_lunch_break) || false
+    @lunch_ends   = @api_data.dig(:camp, :lunch_break_ends_at) || false
   end
 
   def set_tickets_url
