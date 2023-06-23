@@ -2,7 +2,6 @@ require_relative 'current_batch'
 require_relative 'old_batch'
 require_relative 'view'
 
-
 class Plugin
 	class << self
 		def run(current_batches, old_batches)
@@ -22,6 +21,7 @@ class Plugin
 		header
 		current_batch_menus
 		old_batches_menu
+		@view.sub_menu
 	end
 
 	private
@@ -36,7 +36,7 @@ class Plugin
 	def header
 		headers = @batches.map(&:header).compact
 		if headers.empty?
-			puts "#{Color.darkgray}😴#{Color.reset}"
+			puts "😴"
 		else
 			puts "#{headers.join(" #{Color.darkgray}❖#{Color.reset} ")}#{' - ' unless tickets.empty? }#{tickets}"
 		end
@@ -78,6 +78,6 @@ class Plugin
 	def old_batches_menu
     @view.separator
     @view.append_with(body: "Old Batches")
-		@old_batches.each {|batch| @view.generate_old_batch_menu(batch)}
+		@old_batches.each { |batch| @view.generate_old_batch_menu(batch) }
 	end
 end
