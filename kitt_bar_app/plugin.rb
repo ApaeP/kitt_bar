@@ -77,7 +77,7 @@ class Plugin
 
 	def old_batches_menu
     @view.separator
-    @view.append_with(body: "Old Batches")
+    @view.display("Old Batches")
 		@old_batches.each { |batch| @view.generate_old_batch_menu(batch) }
 	end
 end
