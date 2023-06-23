@@ -22,6 +22,21 @@ class View
     append_with(level: 2, body: "Feedbacks", href: batch.feedbacks_url)
   end
 
+  def sub_menu
+		separator
+    append_with(body: "Profile", size: 12)
+    append_with(body: "Calendar", href: "https://kitt.lewagon.com/alumni/#{GITHUB_USERNAME}/calendar", level: 1)
+    append_with(body: "Invoices", href: "https://kitt.lewagon.com/alumni/#{GITHUB_USERNAME}/invoices", level: 1)
+		separator
+    append_with(body: "Tools", size: 12)
+    append_with(body: "Database schemas", href: "https://kitt.lewagon.com/db", level: 1)
+		separator
+    append_with(body: "Links", size: 12)
+    append_with(body: "Paris Web Hall of Fame", href: "https://kitt.lewagon.com/cities/paris/teachers/web?camp_slugs[]=0&camp_slugs[]=1&camp_slugs[]=10&camp_slugs[]=100&camp_slugs[]=1000&camp_slugs[]=1003&camp_slugs[]=101&camp_slugs[]=1030&camp_slugs[]=11&camp_slugs[]=1115&camp_slugs[]=1116&camp_slugs[]=1170&camp_slugs[]=120&camp_slugs[]=1210&camp_slugs[]=1211&camp_slugs[]=1309&camp_slugs[]=1312&camp_slugs[]=134&camp_slugs[]=145&camp_slugs[]=146&camp_slugs[]=15&camp_slugs[]=177&camp_slugs[]=18&camp_slugs[]=2&camp_slugs[]=200&camp_slugs[]=201&camp_slugs[]=220&camp_slugs[]=221&camp_slugs[]=232&camp_slugs[]=24&camp_slugs[]=250&camp_slugs[]=251&camp_slugs[]=290&camp_slugs[]=291&camp_slugs[]=3&camp_slugs[]=30&camp_slugs[]=301&camp_slugs[]=320&camp_slugs[]=321&camp_slugs[]=350&camp_slugs[]=351&camp_slugs[]=378&camp_slugs[]=4&camp_slugs[]=400&camp_slugs[]=401&camp_slugs[]=422&camp_slugs[]=43&camp_slugs[]=440&camp_slugs[]=441&camp_slugs[]=460&camp_slugs[]=48&camp_slugs[]=5&camp_slugs[]=500&camp_slugs[]=501&camp_slugs[]=550&camp_slugs[]=551&camp_slugs[]=554&camp_slugs[]=59&camp_slugs[]=590&camp_slugs[]=591&camp_slugs[]=6&camp_slugs[]=636&camp_slugs[]=660&camp_slugs[]=70&camp_slugs[]=703&camp_slugs[]=724&camp_slugs[]=729&camp_slugs[]=730&camp_slugs[]=731&camp_slugs[]=8&camp_slugs[]=800&camp_slugs[]=801&camp_slugs[]=810&camp_slugs[]=811&camp_slugs[]=83&camp_slugs[]=860&camp_slugs[]=861&camp_slugs[]=940&camp_slugs[]=984&", level: 1)
+    append_with(body: "Alumni", href: "https://kitt.lewagon.com/alumni", level: 1)
+    append_with(body: "World map", href: "https://kitt.lewagon.com/alumni/staff", level: 1)
+	end
+
   def generate_batch_name_and_status(batch)
     append_with(body: "#{batch.menu_name}", href: batch.camp_url, font: 'bold', size: 12)
     append_with(body: batch.batch_status, color: 'red') if batch.batch_status
