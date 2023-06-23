@@ -34,10 +34,6 @@ class Batch
     "#{Color.base(cursus_color)}#{@cursus}#{Color.reset}"
   end
 
-  def menu_city
-    "#{Color.base(32)}##{@city}#{Color.reset}"
-  end
-
   def camp_url
     "https://kitt.lewagon.com/camps/#{@slug}"
   end
