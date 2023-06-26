@@ -1,6 +1,7 @@
 require_relative 'current_batch'
 require_relative 'old_batch'
 require_relative 'view'
+require_relative 'assets/b64_logo'
 
 class Plugin
 	class << self
@@ -36,9 +37,9 @@ class Plugin
 	def header
 		headers = @batches.map(&:header).compact
 		if headers.empty?
-			puts "😴"
+			puts "| image=#{LOGO_B64}"
 		else
-			puts "#{headers.join(" #{Color.darkgray}❖#{Color.reset} ")}#{' - ' unless tickets.empty? }#{tickets}"
+			puts "  #{headers.join(" #{Color.darkgray}❖#{Color.reset} ")}#{' - ' unless tickets.empty? }#{tickets}| size=11 trim=false image=#{LOGO_B64}"
 		end
 		puts "---"
 	end
