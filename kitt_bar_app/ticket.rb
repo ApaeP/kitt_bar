@@ -2,6 +2,7 @@ class Ticket
   attr_reader :content,
               :table,
               :student,
+              :student_avatar,
               :teacher,
               :exercice_name,
               :current_user_can_take,
@@ -20,6 +21,7 @@ class Ticket
     @content = attr.dig(:content)
     @table = attr.dig(:table)
     @student = attr.dig(:user, :name)
+    @student_avatar = attr.dig(:user, :avatar_url)
     @teacher =  attr.dig(:assigned, :name)
     @is_mine = attr.dig(:is_mine)
     @remote = attr.dig(:remote)
