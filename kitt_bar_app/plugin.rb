@@ -1,7 +1,7 @@
 require_relative 'current_batch'
 require_relative 'old_batch'
 require_relative 'view'
-
+require_relative 'assets/b64_logo'
 
 class Plugin
 	class << self
@@ -22,6 +22,7 @@ class Plugin
 		header
 		current_batch_menus
 		old_batches_menu
+		@view.sub_menu
 	end
 
 	private
@@ -36,9 +37,9 @@ class Plugin
 	def header
 		headers = @batches.map(&:header).compact
 		if headers.empty?
-			puts "#{Color.darkgray}😴#{Color.reset}"
+			puts "| image=#{LOGO_B64}"
 		else
-			puts "#{headers.join(" #{Color.darkgray}❖#{Color.reset} ")}#{' - ' unless tickets.empty? }#{tickets}"
+			puts "  #{headers.join(" #{Color.darkgray}❖#{Color.reset} ")}#{' - ' unless tickets.empty? }#{tickets}| size=11 trim=false image=#{LOGO_B64}"
 		end
 		puts "---"
 	end
@@ -78,7 +79,7 @@ class Plugin
 
 	def old_batches_menu
     @view.separator
-    @view.append_with(body: "Old Batches")
-		@old_batches.each {|batch| @view.generate_old_batch_menu(batch)}
+    @view.display("Old Batches")
+		@old_batches.each { |batch| @view.generate_old_batch_menu(batch) }
 	end
 end
