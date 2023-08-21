@@ -14,8 +14,10 @@ class Plugin
     @view = View.new
 		@current_batches  = current_batches
 		@old_batches_info = old_batches
+    # @students = students
 		initialize_batches
 		initialize_old_batches
+    # initialize_students
 	end
 
 	def generate
@@ -34,14 +36,26 @@ class Plugin
 		end
 	end
 
+  # def initialize_students
+  #   @students.each do |student|
+  #     student_hash = {
+  #       id: student,
+  #       name: student["name"],
+  #       avatar_url: student["avatar_url"],
+  #       avatar_base: student["avatar_base"]
+  #     }
+  #     std = Student.new(student_hash)
+  #   end
+  # end
+
 	def header
 		headers = @batches.map(&:header).compact
 		if headers.empty?
-			puts "| image=#{LOGO_B64}"
+      @view.display("", image:LOGO_B64)
 		else
-			puts "  #{headers.join(" #{Color.darkgray}❖#{Color.reset} ")}#{' - ' unless tickets.empty? }#{tickets}| size=11 trim=false image=#{LOGO_B64}"
+      @view.display("#{headers.join(" #{Color.darkgray}❖#{Color.reset} ")}#{' - ' unless tickets.empty? }#{tickets}", size: 11, trim: false, image: LOGO_B64)
 		end
-		puts "---"
+    @view.separator
 	end
 
 	def tickets

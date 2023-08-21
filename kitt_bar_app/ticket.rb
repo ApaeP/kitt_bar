@@ -1,3 +1,5 @@
+require_relative 'student'
+
 class Ticket
   attr_reader :content,
               :table,
@@ -20,8 +22,9 @@ class Ticket
     @view = attr.dig(:view)
     @content = attr.dig(:content)
     @table = attr.dig(:table)
-    @student = attr.dig(:user, :name)
-    @student_avatar = attr.dig(:user, :avatar_url)
+    @student = find_or_create_student(attr.dig(:user))
+    # @student = attr.dig(:user, :name)
+    # @student_avatar = attr.dig(:user, :avatar_url)
     @teacher =  attr.dig(:assigned, :name)
     @is_mine = attr.dig(:is_mine)
     @remote = attr.dig(:remote)
@@ -92,5 +95,47 @@ class Ticket
       end
     end
     ticket_content.map(&:join).map(&:strip)
+  end
+
+  private
+
+  def find_or_create_student(student) # student is the :user attached to a ticket
+    student_id = student.dig(:id).to_s
+    avatar_url = student.dig(:avatar_url)
+    student_name = student.dig(:name)
+
+    # filepath = 'kitt_bar_app/config/students.json'
+    # load json file
+    students_serialized = File.read(STUDENTS_JSON_PATH)
+    all_students        = JSON.parse(students_serialized)
+    # if user found in students_json build user/student instance and return it
+    if student_from_json = all_students[student_id]
+      student_hash = {
+        id: student_id,
+        name: student_name,
+        avatar_url: avatar_url,
+        avatar_base: student_from_json["avatar_base"]
+      }
+      std = Student.new(student_hash)
+    else # else add user to json before building and returning student instance
+      # generating avatar base64 + resizing SOON
+      avatar_base = ImageHandler.textfile(avatar_url)
+
+      student_hash = {
+        name: student_name,
+        avatar_url: avatar_url,
+        avatar_base: avatar_base
+      }
+      all_students[student_id] = student_hash
+      # save json
+      File.open(STUDENTS_JSON_PATH, "wb") do |file|
+        file.write(JSON.generate(all_students))
+      end
+
+      student_hash[:id] = student_id
+      std = Student.new(student_hash)
+    end
+    # returns a student instance created or found
+    return std
   end
 end

@@ -3,12 +3,13 @@ require_relative 'ticket'
 # `osascript -e'set Volume 10'; afplay #{File.join(File.dirname(__FILE__), 'assets/notification_sound.mp3')}`
 
 class CurrentBatch < Batch
-  attr_reader :slug, :lunch_break, :lunch_ends, :ticket_count, :color, :errors, :batch_status, :tickets, :ticket, :tickets_url
+  attr_reader :slug, :lunch_break, :lunch_ends, :ticket_count, :color, :errors, :batch_status, :tickets, :ticket, :tickets_url, :students
 
   def initialize(attr = {})
     super
     @api_data     = fetch_api_data
     @api_status   = set_api_status
+    @students     = load_students
     @tickets      = generate_tickets
     @ticket       = user_ticket
     @tickets_url  = set_tickets_url
@@ -96,6 +97,14 @@ class CurrentBatch < Batch
     else
       "⚫️"
     end
+  end
+
+  def load_students
+    # filepath = "config/students.json"
+    # students_serialized = JSON.parse(File.read(filepath), symbolize_names: true)
+    # students_serialized.each do |student|
+    #   Student.new(student)
+    # end
   end
 
   def generate_tickets
