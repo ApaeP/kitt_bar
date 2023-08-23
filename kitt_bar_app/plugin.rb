@@ -14,10 +14,8 @@ class Plugin
     @view = View.new
 		@current_batches  = current_batches
 		@old_batches_info = old_batches
-    # @students = students
 		initialize_batches
 		initialize_old_batches
-    # initialize_students
 	end
 
 	def generate
@@ -35,18 +33,6 @@ class Plugin
 			CurrentBatch.new(batch)
 		end
 	end
-
-  # def initialize_students
-  #   @students.each do |student|
-  #     student_hash = {
-  #       id: student,
-  #       name: student["name"],
-  #       avatar_url: student["avatar_url"],
-  #       avatar_base: student["avatar_base"]
-  #     }
-  #     std = Student.new(student_hash)
-  #   end
-  # end
 
 	def header
 		headers = @batches.map(&:header).compact
