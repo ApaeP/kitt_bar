@@ -22,12 +22,13 @@ require_relative 'kitt_bar_app/config/setup'
 config_serialized   = File.read('kitt_bar_app/config/settings.json')
 config              = JSON.parse(config_serialized)
 
-CURRENT_BATCHES     = config.dig('current_batches').map{|batch| batch.transform_keys(&:to_sym)}
-OLD_BATCHES         = config.dig('old_batches').map{|batch| batch.transform_keys(&:to_sym)}
-SKILLS              = config.dig('skills').first.values.flatten.map{|skill| skill.dig("skill_id") if skill.dig("can_do")}.join(",")
-GITHUB_USERNAME     = config.dig('github_username')
-KITT_COOKIE         = SessionCookie.firefox
-STUDENTS_JSON_PATH  = 'kitt_bar_app/config/students.json' # create this file with an empty hash in it
+CURRENT_BATCHES    = config.dig('current_batches').map{ |batch| batch.transform_keys(&:to_sym) }
+OLD_BATCHES        = config.dig('old_batches').map{ |batch| batch.transform_keys(&:to_sym) }
+SKILLS             = config.dig('skills').first.values.flatten.map{ |skill| skill.dig("skill_id") if skill.dig("can_do") }.join(",")
+GITHUB_USERNAME    = config.dig('github_username')
+FULL_NAME          = config.dig('full_name')
+KITT_COOKIE        = SessionCookie.firefox
+STUDENTS_JSON_PATH = 'kitt_bar_app/config/students.json'
 
 require_relative 'kitt_bar_app/plugin'
 

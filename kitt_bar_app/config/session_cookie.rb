@@ -25,7 +25,7 @@ class SessionCookie
       cookie = JSON.parse(File.open(json_path).read) if File.exist?(json_path) rescue nil
       return nil unless cookie
 
-      cookie.transform_keys!(&:to_sym) 
+      cookie.transform_keys!(&:to_sym)
       return nil if cookie.dig(:name).nil? || cookie.dig(:name).empty? ||
                     cookie.dig(:value).nil? || cookie.dig(:value).empty? ||
                     cookie.dig(:expiry).nil? || cookie.dig(:expiry).empty?
@@ -34,7 +34,7 @@ class SessionCookie
     end
 
     def firefox_profile_cookies
-      # Finding firefox default user profile folder 
+      # Finding firefox default user profile folder
       # where the cookies db file is supposed to be stored (MacOS) yolo
       profiles = Dir["#{ENV['HOME']}/Library/Application\ Support/Firefox/Profiles/*"]
       profile  = profiles.find { |f| f =~ /\A.+\.default-release\z/ && Dir["#{f}/*"].any?{ |x| x =~ /cookies.sqlite/ } }
