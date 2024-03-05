@@ -18,6 +18,7 @@ class Ticket
   def initialize(attr = {})
     @view = attr.dig(:view)
     @content = attr.dig(:content)
+
     @table = attr.dig(:table)
     @student = attr.dig(:user, :name)
     @teacher =  attr.dig(:assigned, :name)
@@ -53,7 +54,7 @@ class Ticket
   end
 
   def plugin_header
-    "#{self.student} @ table #{self.table}"
+    "#{self.student} @ #{self.table ? "table #{self.table}" : 'no table'}"
   end
 
   def is_remote?
@@ -61,7 +62,7 @@ class Ticket
   end
 
   def is_mine?
-    @is_mine
+    FULL_NAME == @teacher
   end
 
   def sanitize

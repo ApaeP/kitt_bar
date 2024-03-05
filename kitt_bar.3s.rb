@@ -22,6 +22,7 @@ CURRENT_BATCHES    = config.dig('current_batches').map{ |batch| batch.transform_
 OLD_BATCHES        = config.dig('old_batches').map{ |batch| batch.transform_keys(&:to_sym) }
 SKILLS             = config.dig('skills').first.values.flatten.map{ |skill| skill.dig("skill_id") if skill.dig("can_do") }.join(",")
 GITHUB_USERNAME    = config.dig('github_username')
+FULL_NAME          = config.dig('full_name')
 KITT_COOKIE        = SessionCookie.firefox
 
 require_relative 'kitt_bar_app/plugin'
