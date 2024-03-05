@@ -56,7 +56,7 @@ class View
   end
 
   def append_ticket(ticket)
-    display("#{ticket.student} #{ticket.assigned_teacher}", level: 1)
+    display("#{ticket.student.name} #{ticket.assigned_teacher}", image: ticket.student.avatar_base, level: 1)
     display("#{ticket.header}", level: 2)
     ticket.content_formalized.each { |line| display(" #{line}", level: 2) }
     display("take it !", color: 'orange', shell: HttpKitt.put(ticket, "take"), level: 2) if ticket.current_user_can_take
@@ -85,9 +85,25 @@ class View
     end
   end
 
+  def append_toggle_lunch(batch)
+    if batch.is_on_lunch_break?
+      display("🍔 Lunch break in #{batch.lunch_end_in_minutes} minutes")
+      display("💻 back to work !",  shell: HttpKitt.patch(batch.slug, "toggle_lunch"), level: 1)
+    else
+      display("💻 Working hard")
+      display("🍔 lunch break !",  shell: HttpKitt.patch(batch.slug, "toggle_lunch"), level: 1)
+    end
+  end
+
   def append_current_ticket(ticket)
-    display("✅ Validate ticket with #{ticket.student}", shell: HttpKitt.put(ticket, "done"))
-    display("Call #{ticket.student} on Slack", href: ticket.slack_url) if ticket.is_remote?
+    display("✅ Validate ticket with #{ticket.student.name}", shell: HttpKitt.put(ticket, "done"))
+    display("Call #{ticket.student.name} on Slack", href: ticket.slack_url) if ticket.is_remote?
+  end
+
+  private
+
+  def avatar(path)
+    ImageHandler.textfile(path)
   end
 end
 

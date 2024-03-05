@@ -50,6 +50,8 @@ class HttpKitt
       "/api/v1/camps/#{params[:camp_slug]}/on_duties?skill_ids=#{SKILLS}"
     when "finish"
       "/api/v1/camps/#{params[:camp_slug]}/on_duties/finish"
+    when "toggle_lunch"
+      "/api/v1/camps/#{params[:camp_slug]}/toggle_lunch_break"
     else
       params[:ticket].api_v1_ticket_path
     end

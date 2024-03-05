@@ -37,11 +37,11 @@ class Plugin
 	def header
 		headers = @batches.map(&:header).compact
 		if headers.empty?
-			puts "| image=#{LOGO_B64}"
+      @view.display("", image:LOGO_B64)
 		else
-			puts "  #{headers.join(" #{Color.darkgray}❖#{Color.reset} ")}#{' - ' unless tickets.empty? }#{tickets}| size=11 trim=false image=#{LOGO_B64}"
+      @view.display("#{headers.join(" #{Color.darkgray}❖#{Color.reset} ")}#{' - ' unless tickets.empty? }#{tickets}", size: 11, trim: false, image: LOGO_B64)
 		end
-		puts "---"
+    @view.separator
 	end
 
 	def tickets
@@ -60,6 +60,7 @@ class Plugin
         @view.append_tickets(batch.tickets, batch, batch.tickets_url)
         if batch.day_team
           @view.append_day_team(batch.day_team) if batch.has_team_members?
+          @view.append_toggle_lunch(batch) if batch.current_user_can_lunch_break?
           @view.append_toggle_duty(batch, batch.current_user_is_on_duty?)
         end
       end

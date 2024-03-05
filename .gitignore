@@ -1,4 +1,6 @@
+batches.json
 settings.json
 cookies.json
+students.json
 *.swp
 .DS_Store
