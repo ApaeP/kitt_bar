@@ -37,7 +37,7 @@ class SessionCookie
       # Finding firefox default user profile folder
       # where the cookies db file is supposed to be stored (MacOS) yolo
       profiles = Dir["#{ENV['HOME']}/Library/Application\ Support/Firefox/Profiles/*"]
-      profile  = profiles.find { |f| f =~ /\A.+\.default-release\z/ && Dir["#{f}/*"].any?{ |x| x =~ /cookies.sqlite/ } }
+      profile  = profiles.find { |f| f =~ /\A.+\.default-release.+\z/ && !Dir["#{f}/*"].empty? && Dir["#{f}/*"].any?{ |x| x =~ /cookies.sqlite/ } }
       "#{profile}/cookies.sqlite"
     end
 
