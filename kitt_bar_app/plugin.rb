@@ -1,59 +1,65 @@
+# frozen_string_literal: true
+
 require_relative 'current_batch'
 require_relative 'old_batch'
 require_relative 'view'
 require_relative 'assets/b64_logo'
 
 class Plugin
-	class << self
-		def run(current_batches, old_batches)
-			new(current_batches, old_batches).generate
-		end
-	end
+  class << self
+    def run(current_batches, old_batches)
+      new(current_batches, old_batches).generate
+    end
+  end
 
-	def initialize(current_batches, old_batches)
+  def initialize(current_batches, old_batches)
     @view = View.new
-		@current_batches  = current_batches
-		@old_batches_info = old_batches
-		initialize_batches
-		initialize_old_batches
-	end
+    @current_batches  = current_batches
+    @old_batches_info = old_batches
+    initialize_batches
+    initialize_old_batches
+  end
 
-	def generate
-		header
-		current_batch_menus
-		old_batches_menu
-		@view.sub_menu
-	end
+  def generate
+    header
+    current_batch_menus
+    old_batches_menu
+    @view.sub_menu
+  end
 
-	private
+  private
 
-	def initialize_batches
-		@batches = @current_batches.map do |batch|
+  def initialize_batches
+    @batches = @current_batches.map do |batch|
       batch[:view] = @view
-			CurrentBatch.new(batch)
-		end
-	end
+      CurrentBatch.new(batch)
+    end
+  end
 
-	def header
-		headers = @batches.map(&:header).compact
-		if headers.empty?
-			puts "| image=#{LOGO_B64}"
-		else
-			puts "  #{headers.join(" #{Color.darkgray}❖#{Color.reset} ")}#{' - ' unless tickets.empty? }#{tickets}| size=11 trim=false image=#{LOGO_B64}"
-		end
-		puts "---"
-	end
+  def header
+    headers = @batches.map(&:header).compact
+    if headers.empty?
+      puts "| #{logo_string}"
+    else
+      puts "  #{headers.join(" #{Color.darkgray}❖#{Color.reset} ")}#{' - ' unless tickets.empty?}#{tickets}| size=11 trim=false #{logo_string}"
+    end
+    puts '---'
+  end
 
-	def tickets
-		@batches.map(&:current_ticket).compact.join(', ')
-	end
+  def tickets
+    @batches.map(&:current_ticket).compact.join(', ')
+  end
 
-	def batch_headers
-		@batches.map(&:header).compact
-	end
+  def batch_headers
+    @batches.map(&:header).compact
+  end
 
-	def current_batch_menus
-		@batches.each do |batch|
+  def logo_string
+    "image=#{LOGO_B64}"
+  end
+
+  def current_batch_menus
+    @batches.each do |batch|
       @view.separator
       @view.generate_batch_name_and_status(batch)
       if batch.batch_open?
@@ -64,21 +70,21 @@ class Plugin
         end
       end
       @view.generate_batch_calendar_and_students(batch)
-      if ticket = batch.ticket
+      if (ticket = batch.ticket)
         @view.append_current_ticket(ticket)
       end
     end
-	end
+  end
 
-	def initialize_old_batches
-		@old_batches = @old_batches_info
-			.sort_by { |e| e[:slug] }.reverse
-			.map { |batch| OldBatch.new(batch) }
-	end
+  def initialize_old_batches
+    @old_batches = @old_batches_info
+                   .sort_by { |e| e[:slug] }.reverse
+                   .map { |batch| OldBatch.new(batch) }
+  end
 
-	def old_batches_menu
+  def old_batches_menu
     @view.separator
-    @view.display("Old Batches")
-		@old_batches.each { |batch| @view.generate_old_batch_menu(batch) }
-	end
+    @view.display('Old Batches')
+    @old_batches.each { |batch| @view.generate_old_batch_menu(batch) }
+  end
 end

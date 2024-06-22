@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 class String
-	Color::COLORS.each do |k, v|
-		define_method(k, -> { "#{Color.send(k)}#{self}#{Color.reset}" })
-	end
+  Color::COLORS.each_key do |k|
+    define_method(k, -> { "#{Color.send(k)}#{self}#{Color.reset}" })
+  end
 end

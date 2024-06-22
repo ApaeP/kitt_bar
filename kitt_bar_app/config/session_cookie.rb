@@ -1,12 +1,14 @@
+# frozen_string_literal: true
+
 class SessionCookie
   class << self
     def firefox
-      if current_cookie = current
-        current_cookie_expiry     = DateTime.parse(current_cookie.dig(:expiry))
-        current_cookie_value      = current_cookie.dig(:value)
+      if (current_cookie = current)
+        current_cookie_expiry = DateTime.parse(current_cookie[:expiry])
+        current_cookie[:value]
         current_cookie_expires_in = (current_cookie_expiry - Date.today).to_i
 
-        return "#{current_cookie.dig(:name)}=#{current_cookie.dig(:value)}" if current_cookie_expires_in > 1
+        return "#{current_cookie[:name]}=#{current_cookie[:value]}" if current_cookie_expires_in > 1
       end
 
       cookies_db     = firefox_profile_cookies
@@ -14,7 +16,7 @@ class SessionCookie
       cookie_json    = extract_from(tmp_cookies_db)
       write(cookie_json)
       delete_db_copies!
-      "#{cookie_json.dig(:name)}=#{cookie_json.dig(:value)}"
+      "#{cookie_json[:name]}=#{cookie_json[:value]}"
     end
 
     def json_path
@@ -22,13 +24,17 @@ class SessionCookie
     end
 
     def current
-      cookie = JSON.parse(File.open(json_path).read) if File.exist?(json_path) rescue nil
+      begin
+        cookie = JSON.parse(File.open(json_path).read) if File.exist?(json_path)
+      rescue StandardError
+        nil
+      end
       return nil unless cookie
 
       cookie.transform_keys!(&:to_sym)
-      return nil if cookie.dig(:name).nil? || cookie.dig(:name).empty? ||
-                    cookie.dig(:value).nil? || cookie.dig(:value).empty? ||
-                    cookie.dig(:expiry).nil? || cookie.dig(:expiry).empty?
+      return nil if cookie[:name].nil? || cookie[:name].empty? ||
+                    cookie[:value].nil? || cookie[:value].empty? ||
+                    cookie[:expiry].nil? || cookie[:expiry].empty?
 
       cookie
     end
@@ -56,12 +62,12 @@ class SessionCookie
     def copy_cookies_db(path)
       # Copy of the file is needed as when Firefox is running, db is locked
       FileUtils.cp(path, tmp_dir)
-      "#{tmp_dir}/#{path[/(?<=\/)[^\/]+\.sqlite(?=\z)/]}"
+      "#{tmp_dir}/#{path[%r{(?<=/)[^/]+\.sqlite(?=\z)}]}"
     end
 
     def extract_from(path)
       db          = SQLite3::Database.new(path)
-      cookie_name = "_kitt2017_"
+      cookie_name = '_kitt2017_'
       cookie_value, cookie_expiry = db.execute("SELECT value, expiry FROM moz_cookies WHERE name = \"#{cookie_name}\";").flatten
       {
         name: cookie_name,
@@ -75,11 +81,11 @@ class SessionCookie
     end
 
     def delete_db_copies!
-      Dir.glob(File.join(tmp_dir, '/*.sqlite*')).each{ |file| File.delete(file)}
+      Dir.glob(File.join(tmp_dir, '/*.sqlite*')).each { |file| File.delete(file) }
     end
 
     def write(json)
-      File.open(json_path, "w+") { |file| file.write(JSON.dump(json)) }
+      File.open(json_path, 'w+') { |file| file.write(JSON.dump(json)) }
     end
   end
 end

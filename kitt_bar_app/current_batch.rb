@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'batch'
 require_relative 'ticket'
 # `osascript -e'set Volume 10'; afplay #{File.join(File.dirname(__FILE__), 'assets/notification_sound.mp3')}`
@@ -7,8 +9,8 @@ class CurrentBatch < Batch
 
   def initialize(attr = {})
     super
-    @api_data     = fetch_api_data
-    @api_status   = set_api_status
+    @api_data     = fetch_tickets_data
+    @api_status   = get_api_status
     @tickets      = generate_tickets
     @ticket       = user_ticket
     @tickets_url  = set_tickets_url
@@ -23,9 +25,9 @@ class CurrentBatch < Batch
   end
 
   def header
-    return if @color == "gray" || !batch_open?
+    return if @color == 'gray' || !batch_open?
 
-  	"#{@slug} #{Color.send(@color)}#{[emoji, @ticket_count].join(" ")}#{Color.reset}"
+    "#{@slug} #{Color.send(@color)}#{[emoji, @ticket_count].join(' ')}#{Color.reset}"
   end
 
   def batch_open?
@@ -37,7 +39,7 @@ class CurrentBatch < Batch
   end
 
   def current_user_is_on_duty?
-    @api_data.dig(:on_duties).map { |on_duty| on_duty[:id] }.include?(@api_data.dig(:current_user, :id))
+    @api_data[:on_duties].map { |on_duty| on_duty[:id] }.include?(@api_data.dig(:current_user, :id))
   end
 
   def day_team
@@ -50,13 +52,13 @@ class CurrentBatch < Batch
 
   private
 
-  def fetch_api_data
+  def fetch_tickets_data
     url = "https://kitt.lewagon.com/api/v1/camps/#{@slug}/tickets"
 
     request = Open3.capture3("curl --cookie \"#{KITT_COOKIE}\" #{url}").first
     JSON.parse(request, symbolize_names: true)
-  rescue
-    {status: 500}
+  rescue StandardError
+    { status: 500 }
   end
 
   def user_ticket
@@ -64,9 +66,9 @@ class CurrentBatch < Batch
   end
 
   def parse_batch_status
-  	@color 			 	= @api_data.dig(:camp, :color) == "grey" ? "gray" : @api_data.dig(:camp, :color) || 'gray'
-  	@ticket_count = @tickets&.count || -1
-  	@lunch_break  = @api_data.dig(:camp, :on_lunch_break) || false
+    @color = @api_data.dig(:camp, :color) == 'grey' ? 'gray' : @api_data.dig(:camp, :color) || 'gray'
+    @ticket_count = @tickets&.count || -1
+    @lunch_break  = @api_data.dig(:camp, :on_lunch_break) || false
   end
 
   def set_tickets_url
@@ -74,36 +76,35 @@ class CurrentBatch < Batch
   end
 
   def emoji
-    return "🥐" if @lunch_break
+    return '🥐' if @lunch_break
 
     case @color
-    when "red"    then "🔴"
-    when "orange" then "🟠"
-    when "green"  then "🟢"
+    when 'red'    then '🔴'
+    when 'orange' then '🟠'
+    when 'green'  then '🟢'
     else
-      "⚫️"
+      '⚫️'
     end
   end
 
   def generate_tickets
     return [] unless @api_data[:tickets]
 
-    @api_data.dig(:tickets).map {|ticket_data|
+    @api_data[:tickets].map do |ticket_data|
       ticket_data[:view] = @view
       Ticket.new(ticket_data)
-    }
+    end
   end
 
-  def set_api_status
-    @api_data.dig(:status)
+  def get_api_status
+    @api_data[:status]
   end
 
   def get_batch_status
-    status = {
-      403 => "👮 No access to tickets",
+    {
+      403 => '👮 No access to tickets',
       404 => "💩 Batch doesn't exist",
-      500 => "🤖 Server error"
-    }.dig(@api_status)
+      500 => '🤖 Server error'
+    }[@api_status]
   end
 end
-

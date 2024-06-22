@@ -1,0 +1,30 @@
+{
+  "github_username": "",
+  "full_name": "",
+  "current_batches":[
+  ],
+  "old_batches":[
+  ],
+  "skills": [
+    {
+      "rails/project": [
+        {
+          "skill_id": 4,
+          "can_do": true
+        }
+      ],
+      "js": [
+        {
+          "skill_id": 7,
+          "can_do": true
+        }
+      ],
+      "html/css": [
+        {
+          "skill_id": 5,
+          "can_do": true
+        }
+      ]
+    }
+  ]
+}
