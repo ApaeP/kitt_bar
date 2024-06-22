@@ -43,12 +43,20 @@ class SessionCookie
       # Finding firefox default user profile folder
       # where the cookies db file is supposed to be stored (MacOS) yolo
       profiles = Dir["#{ENV['HOME']}/Library/Application\ Support/Firefox/Profiles/*"]
-      profile  = profiles.find do |f|
-        f =~ /\A.+\.default-release\z/ && Dir["#{f}/*"].any? do |x|
-          x =~ /cookies.sqlite/
-        end
-      end
+      profile  = find_profile_in(profiles)
       "#{profile}/cookies.sqlite"
+    end
+
+    def find_profile_in(profiles)
+      arch = `uname -m`.strip
+      case arch
+      when 'x86_64'
+        profiles.find { |f| f =~ /\A.+\.default-release\z/ && Dir["#{f}/*"].any?{ |x| x =~ /cookies.sqlite/ } }
+      when 'arm64'
+        profiles.find { |f| f =~ /\A.+\.default-release.+\z/ && !Dir["#{f}/*"].empty? && Dir["#{f}/*"].any? { |x| x =~ /cookies.sqlite/ } }
+      else
+        raise "Unsupported architecture: #{arch}"
+      end
     end
 
     def copy_cookies_db(path)
