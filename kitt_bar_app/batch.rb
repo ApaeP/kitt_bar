@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Batch
   def initialize(attr = {})
     @slug = attr[:slug]
@@ -23,11 +25,11 @@ class Batch
   end
 
   def cursus_color
-    case @cursus
-    when 'Web' then 32
-    when 'Data Analytics' then 6
-    when 'Data Science' then 87
-    end
+    {
+      "Web" => 32,
+      "Data Analytics" => 6,
+      "Data Science" => 87
+    }[@cursus]
   end
 
   def menu_cursus

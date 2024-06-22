@@ -1,3 +1,4 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 `curl -X \"#{ARGV[0]}\" -H 'Accept: application/json, text/plain, */*' -H 'User-Agent: KittBar/1.0'  --cookie \"#{ARGV[1]}\" #{ARGV[2]}`
