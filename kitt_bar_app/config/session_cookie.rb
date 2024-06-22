@@ -32,9 +32,9 @@ class SessionCookie
       return nil unless cookie
 
       cookie.transform_keys!(&:to_sym)
-      return nil if cookie[:name].blank? ||
-                    cookie[:value].blank? ||
-                    cookie[:expiry].blank?
+      return nil if cookie[:name].nil? || cookie[:name].empty? ||
+                    cookie[:value].nil? || cookie[:value].empty? ||
+                    cookie[:expiry].nil? || cookie[:expiry].empty?
 
       cookie
     end
