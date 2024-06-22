@@ -1,18 +1,42 @@
 # Setup
 
+## MacOS
 
-## 1 - Fork and clone this repo in your code repository
+>This only works on MacOS.
+>You are welcome to contribute to make it work on Linux and/or Windows
+>see NOTES.md
 
+### 1 - Install
 
-## 2 - Setup your batches
+Install xbar
 
-Open the repo
-create `kitt_bar/kitt_bar_app/config/settings.json` file
+```bash
+brew install --cask xbar
+```
 
-Fill it with the batches you want to have access to
-(current_batches should be your incoming and ongoing batches,
-and old_batches your batches that are finished) and the skills
-you want to select for project weeks. (don't change the skill_id!)
+Clone and install the plugin
+
+```bash
+export GITHUB_USERNAME=`gh api user | jq -r '.login'`
+cd ~/code/$GITHUB_USERNAME
+mkdir xbar && cd $_
+git clone git@github.com:ApaeP/kitt_bar.git
+cd kitt_bar
+chmod -x copy_to_plugins.sh
+mv config/settings.example.json config/settings.json
+echo "alias kitt_bar_setup=\"code ~/code/$GITHUB_USERNAME/xbar/kitt_bar/kitt_bar_app/config/settings.json\"" >> ~/code/$GITHUB_USERNAME/dotfiles/aliases
+echo "alias kitt_bar_update=\"sh ~/code/$GITHUB_USERNAME/xbar/kitt_bar/copy_to_plugins.sh\"" >> ~/code/$GITHUB_USERNAME/dotfiles/zshrc
+exec zsh
+```
+
+### 2 - Setup
+
+Open the settings file
+```bash
+kitt_bar_setup
+```
+
+Fill in your batches and skills
 ```json
 {
   "current_batches":[
@@ -37,10 +61,10 @@ you want to select for project weeks. (don't change the skill_id!)
       "city":"Martinique"
     },
     {
-      "slug":827,
+      "slug":320,
       "type":"FT",
       "cursus":"Web",
-      "city":"Martinique"
+      "city":"Paris"
     }
   ],
   "skills": [
@@ -68,57 +92,22 @@ you want to select for project weeks. (don't change the skill_id!)
 }
 ```
 
-## 3 - Kitt session setup
-As this script needs to authenticate you on Kitt in order to retrieve your current tickets, we need to get access to a Kitt session cookie.
-To do so, all you have to do is to login on Kitt once every 6 days on Mozilla Firefox.
-
-(For now it only works with Firefox. We're trying to make it work with Chrome too, but chrome encrypts its cookies DB and we haven't yet succeded in decrypting it, Brave/Safari/Opera will be implemented later)
-
-## 4 - Set up your script bar client
-
-### macOS
-
-Make the `kitt_bar/copy_to_plugins.sh` file executable with
+Save and close the file, then register it in your plugin
 ```bash
-chmod -x copy_to_plugins.sh
-```
-And execute it
-```bash
-./copy_to_plugins.sh
+kitt_bar_update
 ```
 
-Install Xbar:
-```bash
-brew install --cask xbar
-```
+### 3 - Login
+As this script needs to authenticate you on Kitt in order to retrieve your current tickets, it needs to access your Kitt session cookie.
+To do so, all you have to do is to login on Kitt with `Mozilla Firefox`.
+The script will then be able to retrieve your session cookie and store it in the `config/settings.json` file.
 
-Launch the Xbar app (check start the app at login).
-Refresh your Xbar app and tada (supposedly) 🥳
+>We're trying to make it work with Chrome,
+>but chrome encrypts its cookies database and we haven't yet succeded in decrypting it,
+>Brave/Safari/Opera are not supported yet.
+>You are welcome to contribute to this feature.
 
+### 4 - Enjoy
 
-### linux (WIP - 0%)
+Run xbar and enjoy your new plugin
 
-The equivalent of Bitbar for Linux is [Argos](https://github.com/p-e-w/argos).To install it go to [the GNOME extension page](https://extensions.gnome.org/extension/1176/argos/) and turn on the installation toggle.
-
-`Argos` monitors the `~/.config/argos` folder to look for scripts to execute. Remove the default `argos.sh` script there and link the `kitt_bar.rb` file to this folder:
-
-```bash
-rm ~/.config/argos/argos.sh
-ln -s ~/code/$GITHUB_USERNAME/kitt_bar/kitt_bar.rb ~/.config/argos/kitt_bar.rb
-```
-
-
-# TODO
-### Find a way to decrypt chrome cookie value (MacOS)
-- Sqlite3 DB file location: ~/Library/Application\ Support/Google/Chrome/Default/Cookies
-- `SELECT value, encrypted_value FROM cookies WHERE name = "_kitt2017_";`
-  - value is empty
-  - To get Chrome Safe Storage password `security find-generic-password -ga "Chrome"`
-  - [some info here](https://stackoverflow.com/questions/57646301/decrypt-chrome-cookies-from-sqlite-db-on-mac-os)
-### Add a "last refresh" info line down the menu
-### Try to set batches infos as [env variables from xbar config](https://github.com/matryer/xbar-plugins/blob/main/CONTRIBUTING.md#plugin-with-variables)
-
-
-
-
---------------------------------------------------------------------------------------------------------------------------
