@@ -16,18 +16,15 @@ require 'json'
 
 require_relative 'kitt_bar_app/config/setup'
 
-config_serialized  = File.read('kitt_bar_app/config/settings.json')
-config             = JSON.parse(config_serialized)
+config_serialized = File.read('kitt_bar_app/config/settings.json')
+config            = JSON.parse(config_serialized)
 
-CURRENT_BATCHES    = config['current_batches'].map { |batch| batch.transform_keys(&:to_sym) }
-OLD_BATCHES        = config['old_batches'].map { |batch| batch.transform_keys(&:to_sym) }
-SKILLS             = config['skills'].first.values.flatten.map do |skill|
-  skill['skill_id'] if skill['can_do']
-end.join(',')
-GITHUB_USERNAME    = config['github_username']
-FULL_NAME          = config['full_name']
-HALL_OF_FAMES      = config['full_name']
-KITT_COOKIE        = SessionCookie.firefox
+CURRENT_BATCHES   = config['current_batches'].map { |batch| batch.transform_keys(&:to_sym) }
+OLD_BATCHES       = config['old_batches'].map { |batch| batch.transform_keys(&:to_sym) }
+SKILLS            = config['skills'].first.values.flatten.map { |skill| skill['skill_id'] if skill['can_do'] }.join(',')
+GITHUB_USERNAME   = config['github_username']
+FULL_NAME         = config['full_name']
+KITT_COOKIE       = SessionCookie.firefox
 
 require_relative 'kitt_bar_app/plugin'
 
