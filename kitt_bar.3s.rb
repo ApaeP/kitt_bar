@@ -9,6 +9,10 @@
 # <xbar.image>https://kitt.lewagon.com/slack/slack-bot-logo.png</xbar.image>
 # <xbar.dependencies>Ruby</xbar.dependencies>
 
+require_relative 'kitt_bar_app/config/mac_os'
+
+exit if lid_is_closed?
+
 require 'sqlite3'
 require 'fileutils'
 require 'open3'
