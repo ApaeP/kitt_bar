@@ -27,9 +27,8 @@ class SessionCookie
       begin
         cookie = JSON.parse(File.open(json_path).read) if File.exist?(json_path)
       rescue StandardError
-        nil
+        return nil
       end
-      return nil unless cookie
 
       cookie.transform_keys!(&:to_sym)
       return nil if cookie[:name].nil? || cookie[:name].empty? ||
@@ -48,15 +47,7 @@ class SessionCookie
     end
 
     def find_profile_in(profiles)
-      arch = `uname -m`.strip
-      case arch
-      when 'x86_64'
-        profiles.find { |f| f =~ /\A.+\.default-release\z/ && Dir["#{f}/*"].any?{ |x| x =~ /cookies.sqlite/ } }
-      when 'arm64'
-        profiles.find { |f| f =~ /\A.+\.default-release.+\z/ && !Dir["#{f}/*"].empty? && Dir["#{f}/*"].any? { |x| x =~ /cookies.sqlite/ } }
-      else
-        raise "Unsupported architecture: #{arch}"
-      end
+      profiles.find { |f| f.match?(/\A.+\.default-release.*\z/) && !Dir["#{f}/*"].empty? && Dir["#{f}/*"].any? { |x| x.match?(/cookies.sqlite/) } }
     end
 
     def copy_cookies_db(path)
